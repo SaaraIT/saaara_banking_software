@@ -6,7 +6,7 @@ class ShgTermLoanAgreementsController < ApplicationController
 
 
   def index
-    base_scope = if current_user.head_office_user?
+    base_scope = if current_user.head_office_user? || Current.branch.nil?
                    ShgTermLoanAgreement.all
                  else
                    Current.branch.shg_term_loan_agreements
@@ -43,7 +43,7 @@ class ShgTermLoanAgreementsController < ApplicationController
 
   def create
     @term_loan_agreement = @loan_application.build_shg_term_loan_agreement(term_loan_agreement_params)
-    @term_loan_agreement.cooperative_branch_id = Current.branch.id
+    @term_loan_agreement.cooperative_branch_id = @loan_application.cooperative_branch_id
     @term_loan_agreement.self_help_group_id = @loan_application.self_help_group_id
     @term_loan_agreement.creator_id = current_user.id
     if @term_loan_agreement.save
@@ -73,7 +73,7 @@ class ShgTermLoanAgreementsController < ApplicationController
 
   def set_shg_loan_application
     return if params[:shg_loan_application_id].blank?
-    @loan_application = if current_user.head_office_user?
+    @loan_application = if current_user.head_office_user? || Current.branch.nil?
                           ShgLoanApplication.find(params[:shg_loan_application_id])
                         else
                           Current.branch.shg_loan_applications.find(params[:shg_loan_application_id])

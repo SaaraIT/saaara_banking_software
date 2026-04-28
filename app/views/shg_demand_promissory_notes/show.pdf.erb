@@ -109,15 +109,15 @@
           <h2>ಮಾತೃಭೂಮಿ ಸೌಹಾರ್ದ ಸಹಕಾರಿ ಸಂಘ ನಿಯಮಿತ</h2>
           <p>H.O. Mathrdhama Gurupura-Kaikamba, Kinnikambla, Mangalore-574 151.</p>
           <p>ಕೇಂದ್ರ ಕಛೇರಿ: ಮಾತೃಧಾಮ ಗುರುಪುರ-ಕೈಕಂಬ ಮಂಗಳೂರು 574151</p>
-          <p>Phone: <%= Current.branch.phone_no %> | 
+          <p>Phone: <%= @loan_application.cooperative_branch.try(:phone_no) %> |
            (R. NO. 526/2005-2006)</p>
         </td>
       </tr>
     </table>
-    
+
     <table>
       <tr>
-        <td><strong>Branch:</strong> <%= Current.branch.try(:name)%></td>
+        <td><strong>Branch:</strong> <%= @loan_application.cooperative_branch.try(:name) %></td>
         <td class="right-align"><strong>Loan No.:</strong> <%= @demand_promissory_note.loan_no %></td>
       </tr>
     </table>
@@ -129,7 +129,7 @@
     
  
     <p> Do hereby promise to pay Mathrubhoomi Souharda Sahakari Sangha Ltd. Or Order a sum
-of ₹<%= @demand_promissory_note.sum %> (Rupees <%= number_to_currency_words(@demand_promissory_note.sum) %> only) along with the interest thereon at <%=@demand_promissory_note.interest_rate %> p.a. for value received on this <%= @demand_promissory_note.day %> day of <%= @demand_promissory_note.month %> <%=@demand_promissory_note.year %>.</p>
+of ₹<%= @demand_promissory_note.sum || @loan_application.sanction_amount %> (Rupees <%= number_to_currency_words(@demand_promissory_note.sum || @loan_application.sanction_amount) %> only) along with the interest thereon at <%= @demand_promissory_note.interest_rate || @loan_application.int_rate %> p.a. for value received on this <%= @demand_promissory_note.day || Date.today.day %> day of <%= @demand_promissory_note.month || Date.today.strftime('%B') %> <%= @demand_promissory_note.year || Date.today.year %>.</p>
 
 
     Signature Of the Members :-

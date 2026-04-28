@@ -39,11 +39,14 @@
 <%= form_with(model: [@shg_loan_application, @shg_pro_note], local: true) do |f| %> 
     <div class="section">
         <span>Rs. <span class="underline"><%= @shg_pro_note.amount || @shg_loan_application.sanction_amount %></span></span>
-        <span>Place <span class="underline"><%= @shg_pro_note.place || Current.branch.try(:name) %></span></span>
+        <%= f.hidden_field :amount, value: @shg_pro_note.amount || @shg_loan_application.sanction_amount %>
+        <span>Place <span class="underline"><%= @shg_pro_note.place || @shg_loan_application.cooperative_branch.try(:name) %></span></span>
+        <%= f.hidden_field :place, value: @shg_pro_note.place || @shg_loan_application.cooperative_branch.try(:name) %>
     </div>
 
     <div class="section" style="justify-content: flex-end;">
         <span>Date <span class="underline"><%= (@shg_pro_note.date || Date.today).strftime('%d-%m-%Y') %></span></span>
+        <%= f.hidden_field :date, value: @shg_pro_note.date || Date.today %>
     </div>
     <br />
 
@@ -63,24 +66,29 @@
       
          <div class="section">
             <span>From:  <br /> <%= @shg_loan_application.self_help_group.name.html_safe %> </span>
-            <span>Place <span class="underline"><%= @shg_pro_note.place || Current.branch.try(:name) %></span></span>
+            <span>Place <span class="underline"><%= @shg_pro_note.place || @shg_loan_application.cooperative_branch.try(:name) %></span></span>
         </div>
 
         <div class="section" style="justify-content: flex-end;">
             <span>Date <span class="underline"><%= (@shg_pro_note.delivery_date || Date.today).strftime('%d-%m-%Y') %></span></span>
+            <%= f.hidden_field :delivery_date, value: @shg_pro_note.delivery_date || Date.today %>
         </div>
     </div>
     <div class="sections">
         <p>To<br>
         The Branch Manager<br>
         The Mathrubhoomi Souhardha Sahakari Sangha Ltd.<br>
-        <span class="underline" ><%= Current.branch.try(:name) %></span> Branch</p>
+        <span class="underline" ><%= @shg_loan_application.cooperative_branch.try(:name) %></span> Branch</p>
     </div>
     <br />
     <br />
     <div class="sections">
         <p>Dear Sir,</p>
-        <p>I/We request you to take delivery on Demand Promissory Note Dated <span class="underline"><%= (@shg_pro_note.promissory_not_date || Date.today).strftime('%d-%m-%Y') %></span> For Rs. <span class="underline"><%= @shg_pro_note.promissory_not_amount || @shg_loan_application.sanction_amount %></span> duly executed by me/us in your favour and for which consideration has been received by me/us. We authorise you to disburse the amount to any one of us and the payment so made shall be binding on all.</p>
+        <p>I/We request you to take delivery on Demand Promissory Note Dated <span class="underline"><%= (@shg_pro_note.promissory_not_date || Date.today).strftime('%d-%m-%Y') %></span>
+        <%= f.hidden_field :promissory_not_date, value: @shg_pro_note.promissory_not_date || Date.today %>
+        For Rs. <span class="underline"><%= @shg_pro_note.promissory_not_amount || @shg_loan_application.sanction_amount %></span>
+        <%= f.hidden_field :promissory_not_amount, value: @shg_pro_note.promissory_not_amount || @shg_loan_application.sanction_amount %>
+        duly executed by me/us in your favour and for which consideration has been received by me/us. We authorise you to disburse the amount to any one of us and the payment so made shall be binding on all.</p>
         <p>Without prejudice to your right to demand repayment of the entire loan at any time you may deem fit, the repayment by us of the said advance shall be by progressively reducing my/our liability to Sahakari as follows :</p>
         <p>We also authorise you if the Sahakari so thinks fit and necessary and without further reference to me/us, to debit the installments/interest, charges, expenses etc., as and when due by me/us on respective due dates to the SB/CA A/c No. <%= f.text_field :account_no  %> account of Shri <%= f.text_field :account_name %>, who is also one of the borrowers who will always make available sufficient funds in the account for the said purpose. This mandate is irrevocable till all our dues including interest, charge and expense are settled with you to the satisfaction of the Sahakari without prejudice to the right of the Sahakari otherwise available and the Sahakari is entitled to take action any way as deemed fit in its absolute discretion.</p>
         <p>I/We am/are aware that even though the pronote mentions the rate of interest linked to the Reserve Sahakari of India rate, I/We am/are liable to pay interest at the said rate and at such other rates as may be notified to me/us by the Sahakari from time to time.</p>
@@ -111,12 +119,13 @@
         <div class="field">
             <label>Dated:</label>
             <span class="underline"><%= (@shg_pro_note.loan_delivery_date || Date.today).strftime('%d-%m-%Y') %></span>
+            <%= f.hidden_field :loan_delivery_date, value: @shg_pro_note.loan_delivery_date || Date.today %>
         </div>
         <br />
         <div class="field">
             <p><strong>Received Payment</strong></p>
             <p><strong>The Mathrubhoomi Souhardha Sahakari Ltd.</strong></p>
-            <p><%= Current.branch.try(:name) %> Branch</p>
+            <p><%= @shg_loan_application.cooperative_branch.try(:name) %> Branch</p>
             <p>Branch Manager</p>
         </div>
         <br />
@@ -129,7 +138,7 @@
         
         <p class="bold">My/our responsibility is of payment all amount due to under any bills, promissory notes or cheques proceeds of which I/We or the person or any one or more or persons now authorised or to be hereafter authorises by me/us may request you to credit to the said loan account and you may debit the expenses and other Sahakari, charges as also the amount of any dishonoured bills, promissory notes or cheques. I/We expressly waive notices of dishonour with regard to said bills or notes or cheques.</p>
         
-        <p class="bold">In the event of my/our default in payment of any one instalment or in regularising or in clearing the account as per terms agreed upon, I/We know that interest at a penal rate of <span class="underline"><%= @shg_pro_note.penal_rate || 3 %></span> percent per annum above the rate of interest that is charged in the account from time to time is leviable on the advance from the date of such default till regularising/clearing the account as the case may be.</p>
+        <p class="bold">In the event of my/our default in payment of any one instalment or in regularising or in clearing the account as per terms agreed upon, I/We know that interest at a penal rate of <span class="underline"><%= @shg_pro_note.penal_rate || 3 %></span><%= f.hidden_field :penal_rate, value: @shg_pro_note.penal_rate || 3 %> percent per annum above the rate of interest that is charged in the account from time to time is leviable on the advance from the date of such default till regularising/clearing the account as the case may be.</p>
         
         <p class="bold">Further in the matter of making payment towards this debt or acknowledging this debt or any part thereof as and when called upon by the Sahakari to do so for the specific purpose of saving limitation. I/We declare that the payment of acknowledgement made or given by any one or more of us shall be binding on all of us jointly and or severally and that the said payment and acknowledgment so made or given by one or more of us shall have limitation against all of us jointly and or severally for the purpose of limitation. I/We confirm that the rules governing this loan have been explained to me/us and I/We have understood the same.</p>
         

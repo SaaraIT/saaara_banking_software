@@ -6,7 +6,12 @@ class ShgLoanProNotesController < ApplicationController
 
 
   def index
-    @q = Current.branch.shg_pro_notes.ransack(params[:q])
+    base_scope = if current_user.head_office_user?
+                   ShgLoanProNote.all
+                 else
+                   Current.branch.shg_pro_notes
+                 end
+    @q = base_scope.ransack(params[:q])
     @shg_pro_notes = @q.result(distinct: true)
   end
 
@@ -17,7 +22,7 @@ class ShgLoanProNotesController < ApplicationController
   def create
     @shg_pro_note = ShgLoanProNote.new(shg_pro_note_params)
     @shg_pro_note.shg_loan_application_id = @shg_loan_application.id
-    @shg_pro_note.cooperative_branch_id = Current.branch.id
+    @shg_pro_note.cooperative_branch_id = @shg_loan_application.cooperative_branch_id
     @shg_pro_note.shg_loan_application_id = params["shg_loan_application_id"]
     @shg_pro_note.creator_id = current_user.id
     if @shg_pro_note.save
@@ -72,7 +77,12 @@ class ShgLoanProNotesController < ApplicationController
   end
 
   def set_shg_loan_application
-    @shg_loan_application = Current.branch.shg_loan_applications.find(params["shg_loan_application_id"]) unless params["shg_loan_application_id"].blank?
+    return if params["shg_loan_application_id"].blank?
+    @shg_loan_application = if current_user.head_office_user?
+                              ShgLoanApplication.find(params["shg_loan_application_id"])
+                            else
+                              Current.branch.shg_loan_applications.find(params["shg_loan_application_id"])
+                            end
   end
 
   def find_resource_for_permission_check

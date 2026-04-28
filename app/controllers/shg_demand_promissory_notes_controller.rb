@@ -6,7 +6,12 @@ class ShgDemandPromissoryNotesController < ApplicationController
 
 
   def index
-    @q = Current.branch.shg_demand_promissory_notes.ransack(params[:q])
+    base_scope = if current_user.head_office_user?
+                   ShgDemandPromissoryNote.all
+                 else
+                   Current.branch.shg_demand_promissory_notes
+                 end
+    @q = base_scope.ransack(params[:q])
     @demand_promissory_notes = @q.result(distinct: true)
   end
 
@@ -37,7 +42,7 @@ class ShgDemandPromissoryNotesController < ApplicationController
 
   def create
     @demand_promissory_note = @loan_application.build_shg_demand_promissory_note(shg_demand_promissory_note_params)
-    @demand_promissory_note.cooperative_branch_id = Current.branch.id
+    @demand_promissory_note.cooperative_branch_id = @loan_application.cooperative_branch_id
     @demand_promissory_note.creator_id = current_user.id
 
     if @demand_promissory_note.save
@@ -70,7 +75,12 @@ class ShgDemandPromissoryNotesController < ApplicationController
   end
 
   def set_loan_application
-    @loan_application = Current.branch.shg_loan_applications.find(params["shg_loan_application_id"]) unless params["shg_loan_application_id"].blank?
+    return if params["shg_loan_application_id"].blank?
+    @loan_application = if current_user.head_office_user?
+                          ShgLoanApplication.find(params["shg_loan_application_id"])
+                        else
+                          Current.branch.shg_loan_applications.find(params["shg_loan_application_id"])
+                        end
   end
   
   def shg_demand_promissory_note_params
