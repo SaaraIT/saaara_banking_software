@@ -47,7 +47,7 @@
     <%= f.hidden_field :delivery_date, value: @loan_application.sanction_order_date || Date.today %>
     <%= f.hidden_field :loan_delivery_date, value: @loan_application.sanction_order_date || Date.today %>
     <%= f.hidden_field :penal_rate, value: 3 %>
-    <%= f.hidden_field :loan, value: display_loan_type(@loan_application.loan_application_type) %>
+    <%= f.hidden_field :loan, value: @loan_application.loan_type&.name %>
 
     <div class="section">
         <span>Rs. <span class="underline"><%= @loan_application.sanction_amount %></span></span>
@@ -106,7 +106,7 @@
 
         <div class="field">
             <label>Loan:</label>
-            <span class="underline"><%= display_loan_type(@loan_application.loan_application_type) %></span>
+            <span class="underline"><%= @loan_application.loan_type&.name %></span>
         </div>
         <br />
 

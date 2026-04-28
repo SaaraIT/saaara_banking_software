@@ -19,10 +19,9 @@
   <thead>
     <tr>
        <th>Applicant Name</th>
+      <th>Loan Type</th>
       <th>Loan Amount</th>
       <th>Agreement Date</th>
-       
-       
       <th>Actions</th>
     </tr>
   </thead>
@@ -30,6 +29,7 @@
     <% @hypothecation_deeds.each do |deed| %>
       <tr>
          <td><%= deed.member.name %></td>
+         <td><%= deed.loan_application.loan_type&.name %></td>
          <td><%= deed.loan_amount %></td>
          <td><%= deed.agreement_date %></td>
          

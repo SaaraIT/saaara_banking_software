@@ -131,7 +131,7 @@
 
     <table style="margin-top: 5px">
       <tr>
-        <td><strong>Rs.</strong> <%= number_to_indian_currency(@demand_promissory_note.amount) %></td>
+        <td> <%= number_to_indian_currency(@demand_promissory_note.loan_application.sanction_amount) %></td>
         <td class="right-align"><strong>Date:</strong> <%= format_date(@demand_promissory_note.date) %></td>
       </tr>
     </table>
@@ -150,7 +150,7 @@
         <% end %>
     </div>
 
-    <p>Jointly and severally promise to pay MATHRUBHOOMI SOUHARDHA SAHAKARI LTD. Branch or order the sum of Rs. <span class="underline"> <%=  @demand_promissory_note.sum %></span> (Rupees <span class="underline"><%=  number_to_currency_words(@demand_promissory_note.sum) %></span> only) with interest at <span class="underline"><%= @demand_promissory_note.interest_rate %>%</span> and penal at <span class="underline"><%= @demand_promissory_note.penal_rate %>%</span> per annum from this day till date of payment for valuable consideration received in full by way of Loan advanced on the Security of standing to my credit in the books of the said society.</p>
+    <p>Jointly and severally promise to pay MATHRUBHOOMI SOUHARDHA SAHAKARI LTD. Branch or order the sum of Rs. <span class="underline"> <%=  @demand_promissory_note.loan_application.sanction_amount %></span> (Rupees <span class="underline"><%=  number_to_currency_words(@demand_promissory_note.sum) %></span> only) with interest at <span class="underline"><%= @demand_promissory_note.loan_application.int_rate %>%</span> and penal at <span class="underline"><%= @demand_promissory_note.penal_rate %>%</span> per annum from this day till date of payment for valuable consideration received in full by way of Loan advanced on the Security of standing to my credit in the books of the said society.</p>
 
     <hr>
     <table style="width: 100%" class="signature-box">

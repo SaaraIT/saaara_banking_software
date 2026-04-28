@@ -22,21 +22,25 @@
               </div>
             <% end %>
 
+         
+            <%= form.hidden_field :loan_type, id: "loan_type_hidden" %>
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
-                  <%= form.label :loan_type, "Loan Type Code", class: "form-label" %>
-                  <%= form.select :loan_type,
-                      InterestRate.loan_type_options,
-                      { prompt: 'Select Loan Type' },
-                      { class: "form-select", id: "loan_type_select", required: true } %>
+                  <label class="form-label">Loan Type Code</label>
+                  <select class="form-select" id="loan_type_select">
+                    <option value="">Select Loan Type</option>
+                    <% InterestRate.loan_type_options.each do |name, code| %>
+                      <option value="<%= code %>"><%= name %></option>
+                    <% end %>
+                  </select>
                   <small class="text-muted">Or enter a custom code below</small>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="mb-3">
-                  <%= form.label :loan_type, "Custom Loan Type Code", class: "form-label" %>
-                  <%= form.text_field :loan_type, class: "form-control", id: "loan_type_custom", placeholder: "e.g., NEW_LOAN" %>
+                  <label class="form-label">Custom Loan Type Code</label>
+                  <input type="text" class="form-control" id="loan_type_custom" placeholder="e.g., NEW_LOAN">
                 </div>
               </div>
             </div>
@@ -125,15 +129,18 @@
 document.addEventListener('DOMContentLoaded', function() {
   const selectField = document.getElementById('loan_type_select');
   const customField = document.getElementById('loan_type_custom');
+  const hiddenField = document.getElementById('loan_type_hidden');
 
   selectField.addEventListener('change', function() {
     if (this.value) {
       customField.value = this.value;
+      hiddenField.value = this.value;
     }
   });
 
   customField.addEventListener('input', function() {
     selectField.value = '';
+    hiddenField.value = this.value;
   });
 });
 </script>

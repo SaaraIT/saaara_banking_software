@@ -87,7 +87,7 @@
 
         <div class="field">
             <label>Loan:</label>
-            <%= display_loan_type(@loan_application.loan_application_type) %>
+            <%= @loan_application.loan_type&.name %>
         </div>
         <br />
 

@@ -12,7 +12,7 @@ class HypothecationDeedsController < ApplicationController
                    Current.branch.hypothecation_deeds
                  end
     @q = base_scope.ransack(params[:q])
-    @hypothecation_deeds = @q.result(distinct: true)
+    @hypothecation_deeds = @q.result(distinct: true).includes(:member, loan_application: :loan_type)
   end
 
   def new

@@ -106,7 +106,7 @@ module ApplicationHelper
   # Check if current user can edit member fields (fields up to office-note section)
   # Only staff and manager can edit these fields
   def can_edit_member_fields?
-    current_user.staff? || current_user.manager?
+    current_user.staff? || current_user.manager? || current_user.super_admin?
   end
 
   # Check if current user can edit head office fields (fields after Head Office Section)

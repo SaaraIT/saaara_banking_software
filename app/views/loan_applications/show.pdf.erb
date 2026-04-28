@@ -252,7 +252,7 @@
                 <p>(R. NO. 526/2005-2006)</p>
                 <br />
                 <h2>LOAN APPLICATION</h2>
-                <label>Loan Type: </label> <%= display_loan_type(@loan_application.loan_application_type) %>
+                <label>Loan Type: </label> <%= @loan_application.loan_type&.name %>
             </td>
         </tr>
      </table>

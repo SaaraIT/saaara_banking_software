@@ -8,17 +8,21 @@ class InterestRate < ApplicationRecord
   scope :active, -> { where(active: true) }
   
   def self.matching_rate(loan_application_type, sanction_amount)
+    return nil if loan_application_type.blank? || sanction_amount.blank?
+
     active
-      .where(loan_type: loan_application_type)
-      .where("min_amount IS NULL OR min_amount <= ?", sanction_amount)
-      .where("max_amount IS NULL OR max_amount >= ?", sanction_amount)
-      .order(Arel.sql("min_amount IS NULL, min_amount DESC"))
+      .where("LOWER(TRIM(loan_type)) = LOWER(TRIM(:loan_type))", loan_type: loan_application_type)
+      .where("(min_amount IS NULL OR min_amount <= :amount)", amount: sanction_amount)
+      .where("(max_amount IS NULL OR max_amount >= :amount)", amount: sanction_amount)
+      .order(Arel.sql("min_amount IS NULL ASC, min_amount DESC"))
       .first
   end
 
   # Get interest rate for a loan application
   def self.rate_for(loan_type, amount = nil)
-    rates = active.where(loan_type: loan_type).order(:min_amount)
+    return nil if loan_type.blank?
+
+    rates = active.where("LOWER(TRIM(loan_type)) = LOWER(TRIM(?))", loan_type).order(:min_amount)
 
     return rates.first&.rate if rates.count == 1
 
@@ -51,8 +55,8 @@ class InterestRate < ApplicationRecord
   }.freeze
 
   def self.loan_type_options
-    # Use dynamic LoanType model if it has records, otherwise fall back to hardcoded
-    if LoanType.any?
+    # Use dynamic LoanType model if it has active records, otherwise fall back to hardcoded
+    if LoanType.active.any?
       LoanType.options_for_select
     else
       LOAN_TYPES.map { |code, name| [name, code] }
@@ -60,8 +64,8 @@ class InterestRate < ApplicationRecord
   end
 
   def self.loan_type_hash
-    # Use dynamic LoanType model if it has records, otherwise fall back to hardcoded
-    if LoanType.any?
+    # Use dynamic LoanType model if it has active records, otherwise fall back to hardcoded
+    if LoanType.active.any?
       LoanType.code_name_hash
     else
       LOAN_TYPES
