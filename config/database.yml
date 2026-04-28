@@ -24,7 +24,7 @@ default: &default
 
 development:
   <<: *default
-  database: cooperative_forms
+  database: saara_cooperative_forms
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -58,7 +58,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: cooperative_forms
+  database: saara_cooperative_forms
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -83,18 +83,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: cooperative_forms
+    database: saara_cooperative_forms
     username: dbuser
     password: isiri
   cache:
     <<: *primary_production
-    database: cooperative_forms_cache
+    database: saara_cooperative_forms_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: cooperative_forms_queue
+    database: saara_cooperative_forms_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: cooperative_forms_cable
+    database: saara_cooperative_forms_cable
     migrations_paths: db/cable_migrate
