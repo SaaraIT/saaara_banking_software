@@ -296,6 +296,30 @@
     <%= f.select :mode_of_operation, ["Self Only","Either OR Survivor","Former OR Survivor","Any one OR Survivor","Jointly","Others"], { prompt: "Select Mode" }, class: "form-select" %>
   </div>
 
+<%# ── Nominee ── %>
+<div class="acc-section">
+  <h5>Nominee Details</h5>
+  <table class="acc-table" style="width:100%; font-size:13px;">
+    <tr>
+      <td style="width:35%;"><strong>Name of the Nominee &amp; Address:<span style="color:red">*</span></strong></td>
+      <td>
+        <%= f.text_field :nominee_name, class: "acc-input", placeholder: "Nominee name" %>
+        <%= f.text_area :nominee_address, class: "acc-input", rows: 2, style: "margin-top:2px; width:100%; padding:4px;" %>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>And Relationship with Applicant:</strong></td>
+      <td>
+        <%= f.select :nominee_relationship, ["Select Relationship", "Father", "Mother", "Spouse", "Son", "Daughter", "Brother", "Sister", "Other"], {}, class: "acc-input" %>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>with Mobile No:<span style="color:red">*</span></strong></td>
+      <td><%= f.text_field :nominee_mobile, class: "acc-input", placeholder: "Mobile number" %></td>
+    </tr>
+  </table>
+</div>
+
   <%# ── KYC ── %>
   <div class="acc-section">
     <h5>KYC Identification Documents To be Submitted By Applicants</h5>

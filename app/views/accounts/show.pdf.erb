@@ -159,7 +159,30 @@
 <%# MODE OF OPERATION %>
 <p><strong>Mode of Operation:</strong> <%= @account.mode_of_operation %></p>
 
+<%# NOMINEE %>
+<table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
+  <tr>
+    <th colspan="2" style="text-align:center; border:1px solid #000; padding:4px;">Nominee Details</th>
+  </tr>
+  <tr>
+    <td style="border:1px solid #000; padding:4px; width:40%;"><strong>Name of Nominee:</strong></td>
+    <td style="border:1px solid #000; padding:4px;"><%= @account.nominee_name %></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #000; padding:4px;"><strong>Address:</strong></td>
+    <td style="border:1px solid #000; padding:4px;"><%= @account.nominee_address %></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #000; padding:4px;"><strong>Relationship with Applicant:</strong></td>
+    <td style="border:1px solid #000; padding:4px;"><%= @account.nominee_relationship %></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #000; padding:4px;"><strong>Mobile No:</strong></td>
+    <td style="border:1px solid #000; padding:4px;"><%= @account.nominee_mobile %></td>
+  </tr>
+</table>
 <%# KYC %>
+
 <table>
   <tr><th colspan="2" style="text-align:center;">KYC Identification Documents To be Submitted By Applicants</th></tr>
   <tr><th>LIST 1 - Latest Photo Identification Documents</th><th>LIST 2 - Latest Documents Showing Address Proof</th></tr>

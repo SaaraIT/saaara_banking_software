@@ -112,7 +112,8 @@ end
       :minor_guardian_name, :minor_guardian_relationship,
       :marital_status, :religion, :education, :occupation,
       :organisation_name, :nature_of_business, :profession,
-      :annual_income, :asset_ownership, :preferred_investment, :loans_info, :insurance
+      :annual_income, :asset_ownership, :preferred_investment, :loans_info, :insurance,
+      :nominee_name, :nominee_address, :nominee_same_address, :nominee_relationship, :nominee_mobile
     )
   end
 end
