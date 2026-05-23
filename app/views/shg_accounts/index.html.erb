@@ -1,0 +1,41 @@
+<div class="mb-3">
+  <%= link_to "Create Account", new_self_help_group_shg_account_path(@shg), class: "btn btn-primary" %>
+  &nbsp;
+  <%= link_to "Back", self_help_groups_path, class: "btn btn-secondary" %>
+</div>
+
+<h4>SHG Accounts — <%= @shg.name %></h4>
+<br>
+
+<% if @shg_accounts.empty? %>
+  <div class="alert alert-info">No accounts created yet.</div>
+<% else %>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Account Number</th>
+        <th>SHG Name</th>
+        <th>Date</th>
+        <th>Branch</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @shg_accounts.each_with_index do |account, i| %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><%= account.account_number %></td>
+          <td><%= account.shg_name %></td>
+          <td><%= account.date %></td>
+          <td><%= account.branch %></td>
+          <td>
+            <%= link_to "View", self_help_group_shg_account_path(@shg, account), class: "btn btn-sm btn-info" %>
+            <%= link_to "Edit", edit_self_help_group_shg_account_path(@shg, account), class: "btn btn-sm btn-warning" %>
+            <%= link_to "Print", self_help_group_shg_account_path(@shg, account, format: :pdf), class: "btn btn-sm btn-primary" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

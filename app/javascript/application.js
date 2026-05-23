@@ -1,4 +1,5 @@
 import "@hotwired/turbo-rails"
+Turbo.session.drive = false
 import { Application } from "@hotwired/stimulus"
  
 import * as bootstrap from "bootstrap"

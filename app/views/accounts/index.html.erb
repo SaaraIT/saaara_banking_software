@@ -1,0 +1,43 @@
+<div class="mb-3">
+  <%= link_to "Create Account", new_member_account_path(@member), class: "btn btn-primary" %>
+  &nbsp;
+  <%= link_to "Back", members_path, class: "btn btn-secondary" %>
+</div>
+
+<h4>Term & Deposit Accounts — <%= @member.name %></h4>
+<br>
+
+<% if @accounts.empty? %>
+  <div class="alert alert-info">No accounts created yet.</div>
+<% else %>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Account Number</th>
+        <th>Account Type</th>
+        <th>Date</th>
+        <th>Initial Deposit</th>
+        <th>Branch</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @accounts.each_with_index do |account, i| %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><%= account.account_number %></td>
+          <td><%= account.account_type %></td>
+          <td><%= account.date %></td>
+          <td>₹ <%= account.initial_deposit %></td>
+          <td><%= account.branch %></td>
+          <td>
+            <%= link_to "View", member_account_path(@member, account), class: "btn btn-sm btn-info" %>
+            <%= link_to "Edit", edit_member_account_path(@member, account), class: "btn btn-sm btn-warning" %>
+            <%= link_to "Print", member_account_path(@member, account, format: :pdf), class: "btn btn-sm btn-primary" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

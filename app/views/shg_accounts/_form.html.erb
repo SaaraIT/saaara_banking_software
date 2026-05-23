@@ -1,0 +1,312 @@
+<style>
+  .acc-section { border: 1px solid #aaa; padding: 12px 15px; margin-bottom: 20px; }
+  .acc-section h5 { text-decoration: underline; text-align: center; margin-bottom: 15px; font-weight: bold; }
+  .acc-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .acc-table th, .acc-table td { border: 1px solid #aaa; padding: 6px 8px; font-size: 14px; }
+  .acc-table th { background: #f5f5f5; font-weight: 600; }
+  .acc-input { border: none; border-bottom: 1px solid #333; outline: none; width: 100%; background: transparent; padding: 2px 4px; }
+  .header-table { width: 100%; margin-bottom: 10px; }
+</style>
+
+<% url = action == :new ? self_help_group_shg_accounts_path(@shg) : self_help_group_shg_account_path(@shg, @shg_account) %>
+<% method = action == :new ? :post : :patch %>
+
+<%= form_with model: @shg_account, url: url, method: method, local: true, data: { turbo: false } do |f| %>
+  <% if @shg_account.errors.any? %>
+    <div class="alert alert-danger">
+      <% @shg_account.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %>
+    </div>
+  <% end %>
+
+  <%# HEADER %>
+  <table class="header-table">
+    <tr>
+      <td style="width:110px"><%= image_tag "logo.png", style: "width:100px" %></td>
+      <td style="text-align:center">
+        <h4 style="margin:0; font-size:20px;">MATHRUBHOOMI SOUHARDA SAHAKARI SANGHA LTD</h4>
+        <p style="margin:2px 0; font-size:12px">REG.NO.526/2005-06</p>
+        <p style="margin:2px 0; font-size:11px">Regd.Office: "Mathrudhama" Gurupura-Kaikamba Kinnikambala Mangalore D.K.-574151 Ph: 9606912823</p>
+        <h5 style="margin-top:6px; font-size:16px; text-decoration:underline;">Member Self Help Group-Savings Account Opening Forms</h5>
+      </td>
+    </tr>
+  </table>
+
+  <%# TO SECTION %>
+  <div style="margin-bottom:15px; font-size:14px;">
+    <p style="margin:4px 0;">To,</p>
+    <p style="margin:4px 0;">The Branch Manager</p>
+    <p style="margin:4px 0;"><%= Current.branch.try(:name) %> Branch</p>
+  </div>
+
+  <%# GENDER CODE %>
+  <div style="display:flex; justify-content:flex-end; margin-bottom:15px;">
+    <table style="border-collapse:collapse;">
+      <tr>
+        <td style="border:1px solid #aaa; padding:6px 10px; font-size:14px;"><strong>SHG Gender Code (M/F/Mixed)</strong></td>
+        <td style="border:1px solid #aaa; padding:6px 10px; min-width:150px;">
+          <%= f.select :gender_code, ["Male","Female","Mixed"], { prompt: "Select" }, class: "form-select form-select-sm" %>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <%# SUBJECT %>
+  <p style="font-size:14px; font-weight:bold; text-align:center; margin-bottom:15px;">Sub: Application For SHG SB Account Opening</p>
+  <p style="font-size:14px; margin-bottom:15px;">Dear Madam/Sir,</p>
+  <p style="font-size:13px; margin-bottom:15px;">I/We request to you open a Saving Account in name of our Self Help Group. We agreed to abide by the rules and regulations of the Sahakari related to Savings Account.</p>
+
+  <%# SHG INFO TABLE %>
+  <table class="acc-table" style="margin-bottom:20px;">
+    <tr>
+      <td style="width:30%"><strong>Name Of SHG</strong></td>
+      <td><%= f.text_field :shg_name, class: "acc-input" %></td>
+    </tr>
+    <tr>
+      <td><strong>Date Of Formation</strong></td>
+      <td><%= f.date_field :date_of_formation, class: "acc-input", style: "width:200px" %></td>
+    </tr>
+    <tr>
+      <td><strong>Number Of Members</strong></td>
+      <td><%= f.number_field :number_of_members, class: "acc-input", style: "width:100px", value: (@shg_account.number_of_members.present? ? @shg_account.number_of_members : @shg.shg_members.count) %></td>
+    </tr>
+    <tr>
+      <td><strong>Address</strong></td>
+      <td><%= f.text_area :shg_address, class: "acc-input", rows: 2 %></td>
+    </tr>
+  </table>
+
+  <p style="font-size:13px; margin-bottom:15px;">The Savings account will be operated by Joint Signature of any two among the following representatives of our Self Help Group. A copy of resolution taken by our Self Help Group in this regard is attached.</p>
+
+  <%# REPRESENTATIVES TABLE %>
+  <table class="acc-table" style="margin-bottom:20px;">
+    <tr>
+      <th style="width:20%"></th>
+      <th style="width:40%; text-align:center;">President</th>
+      <th style="width:40%; text-align:center;">Secretary</th>
+    </tr>
+    <tr>
+      <td><strong>Name</strong></td>
+      <td>
+        <%= f.select :president_name,
+          @shg.shg_members.map { |m| [m.name, m.name] },
+          { prompt: "Select President" },
+          class: "form-select form-select-sm", id: "president_select" %>
+      </td>
+      <td>
+        <%= f.select :secretary_name,
+          @shg.shg_members.map { |m| [m.name, m.name] },
+          { prompt: "Select Secretary" },
+          class: "form-select form-select-sm", id: "secretary_select" %>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Age</strong></td>
+      <td><%= f.text_field :president_age, class: "acc-input", id: "president_age" %></td>
+      <td><%= f.text_field :secretary_age, class: "acc-input", id: "secretary_age" %></td>
+    </tr>
+    <tr>
+      <td><strong>Designation</strong></td>
+      <td><%= f.text_field :president_designation, class: "acc-input", value: @shg_account.president_designation || "President" %></td>
+      <td><%= f.text_field :secretary_designation, class: "acc-input", value: @shg_account.secretary_designation || "Secretary" %></td>
+    </tr>
+    <tr>
+      <td><strong>Address</strong></td>
+      <td><%= f.text_area :president_address, class: "acc-input", rows: 2, id: "president_address" %></td>
+      <td><%= f.text_area :secretary_address, class: "acc-input", rows: 2, id: "secretary_address" %></td>
+    </tr>
+    <tr>
+      <td><strong>Mobile</strong></td>
+      <td><%= f.text_field :president_mobile, class: "acc-input", id: "president_mobile" %></td>
+      <td><%= f.text_field :secretary_mobile, class: "acc-input", id: "secretary_mobile" %></td>
+    </tr>
+    </table>
+
+<%# KYC + SPECIMEN TABLE %>
+<table class="acc-table" style="margin-bottom:20px;">
+  <tr>
+    <th style="width:20%"></th>
+    <th style="width:40%; text-align:center;">President</th>
+    <th style="width:40%; text-align:center;">Secretary</th>
+  </tr>
+  <tr>
+    <td><strong>KYC Documents Provided</strong></td>
+    <td style="font-size:13px;">
+      <div><strong>Enclosed copy of address &amp; ID Proof</strong></div>
+      <div style="margin:5px 0;">
+        <label style="margin-right:10px;"><input type="checkbox" > Adhar Card</label>
+        <label style="margin-right:10px;"><input type="checkbox" > Pancard</label>
+        <label style="margin-right:10px;"><input type="checkbox" > Voter ID</label>
+        <label style="margin-right:10px;"><input type="checkbox" > DL</label>
+      </div>
+      <div style="margin-top:5px;">Any Other documents accepted by Sahakari(Specify)..........................</div>
+    </td>
+    <td style="font-size:13px;">
+      <div><strong>Enclosed copy of address &amp; ID Proof</strong></div>
+      <div style="margin:5px 0;">
+        <label style="margin-right:10px;"><input type="checkbox" > Adhar Card</label>
+        <label style="margin-right:10px;"><input type="checkbox" > Pancard</label>
+        <label style="margin-right:10px;"><input type="checkbox" > Voter ID</label>
+        <label style="margin-right:10px;"><input type="checkbox" > DL</label>
+      </div>
+      <div style="margin-top:5px;">Any Other documents accepted by Sahakari(Specify)..........................</div>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Specimen Signature / Thumb Impression</strong></td>
+    <td style="height:80px;"><div style="font-size:12px; color:#555; margin:5px 20px 3px;">Signature / Thumb Impression</div><div style="height:50px; border-bottom:2px solid #000; margin:0 20px;"></div></td>
+    <td style="height:80px;"><div style="font-size:12px; color:#555; margin:5px 20px 3px;">Signature / Thumb Impression</div><div style="height:50px; border-bottom:2px solid #000; margin:0 20px;"></div></td>
+  </tr>
+</table>
+
+  <%# DECLARATION %>
+  <p style="font-size:13px; margin-bottom:20px;">We hereby declare that the above information is true and correct. We have agreed to the terms and conditions and also agree to abide by any amendments to the terms and conditions as may be stipulated by the Sahakari from time to time.</p>
+
+  <p style="font-size:13px;">Yours faithfully,</p>
+  <div style="display:flex; justify-content:space-around; margin:20px 0;">
+    <div style="text-align:center; width:200px;">
+      <div style="height:60px; border-bottom:2px solid #000; margin-bottom:5px;"></div>
+      <p style="font-size:12px;"><strong>1. President Signature</strong></p>
+    </div>
+    <div style="text-align:center; width:200px;">
+      <div style="height:60px; border-bottom:2px solid #000; margin-bottom:5px;"></div>
+      <p style="font-size:12px;"><strong>2. Secretary Signature</strong></p>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:40px; margin-bottom:20px; font-size:13px;">
+    <div>Date: <span style="border-bottom:1px solid #000; display:inline-block; width:150px;">&nbsp;</span></div>
+    <div>Place: <span style="border-bottom:1px solid #000; display:inline-block; width:150px;">&nbsp;</span></div>
+  </div>
+
+<%# ENCLOSURE %>
+<p style="font-size:13px; margin-bottom:5px;"><strong>Enclosure:-</strong></p>
+<p style="font-size:13px; margin:2px 0;">1. Copy Of Resolution by SHG to open Savings Account</p>
+<p style="font-size:13px; margin:2px 0;">2. Photographs of authorised representatives</p>
+<p style="font-size:13px; margin:2px 0; margin-bottom:20px;">3. Copy Of ID and address proof of authorised representatives</p>
+
+<%# FOR SAHAKARI USE %>
+  <div class="acc-section">
+    <h5>For Sahakari's Use Only</h5>
+    <p style="font-size:13px;">1. The applicant has affixed his/her Signature or Thumb print as the case may be in my presence ………………</p>
+    <p style="font-size:13px;">2. I have explained the rules/regulations to the applicant ………………</p>
+    <p style="font-size:13px;">3. Account has been opened on
+      <%= f.date_field :account_opened_on, class: "acc-input", style: "width:180px; display:inline-block;" %>
+    </p>
+    <div style="display:flex; gap:40px; margin-top:10px; font-size:13px;">
+      <div>Date: <span style="border-bottom:1px solid #000; display:inline-block; width:150px;">&nbsp;</span></div>
+      <div>Officer: <%= f.text_field :officer_name, class: "acc-input", style: "width:200px; display:inline-block;" %></div>
+    </div>
+  </div>
+
+<%# RESOLUTION TABLE %>
+<div class="acc-section">
+  <h5>Resolution by SHG For Opening Savings Account</h5>
+  <table class="acc-table">
+    <tr>
+      <td style="width:35%"><strong>Name Of SHG</strong></td>
+      <td><%= @shg_account.shg_name %></td>
+    </tr>
+    <tr>
+      <td><strong>Date Of Formation</strong></td>
+      <td><%= f.date_field :date_of_formation, class: "acc-input", style: "width:200px" %></td>
+    </tr>
+    <tr>
+      <td><strong>Number Of Members</strong></td>
+      <td><%= @shg.shg_members.count %></td>
+    </tr>
+    <tr>
+      <td><strong>Address</strong></td>
+      <td style="height:60px;"><%= @shg_account.shg_address %></td>
+    </tr>
+  </table>
+</div>
+
+<%# RESOLUTION MANUAL OPTION %>
+<div class="acc-section">
+  <h5>Resolution For Opening Members SHG Savings Account <span style="color:red;">(MANUAL OPTION)</span></h5>
+  <p style="font-size:13px; text-align:justify; margin-bottom:15px;">
+    Today on ………………(Date) at the meeting of ………………………(Name Of Shg) at ………………………………(Meeting Place Of Shg/address) in presence of all its members, it is resolved that our ………………………( Name Of Shg) will open a Savings Account in Mathrubhoomi Souharda Sahakari Sangha ………………Branch. It has also been further resolved that Shri/Smt ………………………(Designation ………………………) and Shri/Smt ………………………(Designation ………………………) will sign all the necessary documents related to the opening Savings account representatives on behalf of ………………………(Name Of Shg) Transaction in the Savings account of the group will be done by Joint Signature Of any two among the above mentioned representatives.
+  </p>
+  <p style="font-size:13px; margin-bottom:20px;">
+    The above resolution for <strong>Opening</strong> Member SHG <strong>Savings Account</strong> is agreed and signed by all SHG members (Seperate Sheet Enclosed)
+  </p>
+  <div style="display:flex; justify-content:space-between; margin-top:30px; font-size:13px;">
+    <div style="text-align:center; width:200px;">
+      <div style="height:50px; border-bottom:2px solid #000; margin-bottom:5px;"></div>
+      <p>Signature/Thumb Impression</p>
+    </div>
+    <div style="text-align:center; width:200px;">
+      <div style="height:50px; border-bottom:2px solid #000; margin-bottom:5px;"></div>
+      <p>Signature/Thumb Impression</p>
+    </div>
+  </div>
+</div>
+
+<%# MEMBERS RESOLUTION TABLE %>
+<div class="acc-section">
+  <h5>Resolution for Opening Savings account and agreed by SHG members</h5>
+  <p style="font-size:13px; margin-bottom:10px;">We all the members Of ………………………………SHG agree to the above decision</p>
+  <table class="acc-table" style="font-size:12px;">
+    <thead>
+      <tr>
+        <th style="width:4%;">Si No</th>
+        <th style="width:18%;">Name Of Shg Members</th>
+        <th style="width:12%;">Mob</th>
+        <th style="width:6%;">Age</th>
+        <th style="width:28%;">Name Of Father/Husband &amp; Address</th>
+        <th style="width:12%;">A/C NO.</th>
+        <th style="width:20%;">Signature</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @shg.shg_members.each_with_index do |member, i| %>
+        <tr style="height:35px;">
+          <td style="text-align:center;"><%= i + 1 %></td>
+          <td><%= member.name %></td>
+          <td><%= member.mobile %></td>
+          <td style="text-align:center;"><%= member.age %></td>
+          <td><%= member.full_address %></td>
+          <td></td>
+          <td></td>
+        </tr>
+      <% end %>
+      <% remaining = [20 - @shg.shg_members.count, 0].max %>
+      <% (@shg.shg_members.count + 1..@shg.shg_members.count + remaining).each do |n| %>
+        <tr style="height:35px;">
+          <td style="text-align:center;"><%= n %></td>
+          <td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+  <div class="mb-4" style="margin-top:20px;">
+    <%= f.submit action == :new ? "Create Account" : "Update Account", class: "btn btn-primary" %>
+    &nbsp;
+    <%= link_to "Back", self_help_group_path(@shg), class: "btn btn-secondary" %>
+  </div>
+<% end %>
+
+<script>
+  const members = <%= @shg.shg_members.map { |m|
+    { name: m.name, age: m.age.to_s, address: m.full_address, mobile: m.mobile }
+  }.to_json.html_safe %>;
+
+  function fillMember(selectId, ageId, addressId, mobileId) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    sel.addEventListener('change', function() {
+      const m = members.find(x => x.name === this.value);
+      if (!m) return;
+      const age  = document.getElementById(ageId);
+      const addr = document.getElementById(addressId);
+      const mob  = document.getElementById(mobileId);
+      if (age)  age.value  = m.age;
+      if (addr) addr.value = m.address;
+      if (mob)  mob.value  = m.mobile;
+    });
+  }
+
+  fillMember('president_select', 'president_age', 'president_address', 'president_mobile');
+  fillMember('secretary_select', 'secretary_age', 'secretary_address', 'secretary_mobile');
+</script>

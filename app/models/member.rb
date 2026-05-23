@@ -1,4 +1,5 @@
 class Member < ApplicationRecord
+  has_many :accounts, dependent: :destroy
   validates :name, :father_or_husband_name, :mobile_number, :aadhaar_number, :age, :education, :occupation, :religion,
           :address_a_building,
           :address_a_village, :address_a_district, :address_a_pincode,

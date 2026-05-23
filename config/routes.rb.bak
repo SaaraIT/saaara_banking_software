@@ -21,11 +21,8 @@ Rails.application.routes.draw do
       resources :hypothecation_deeds
     end
 
-resources :accounts do
-      collection do
-        get :search_member
-      end
-    end
+    resources :accounts
+    resources :accounts
     resources :income_declarations
     resources :jewel_loans do
       resources :jewel_appraisers_reports
@@ -57,7 +54,6 @@ resources :accounts do
   # ✅ Set the root path
   root "members#index"
   resources :self_help_groups do
-    resources :shg_accounts
     resources :shg_loan_applications do
       resources :shg_loan_pro_notes
       resources :shg_term_loan_agreements
@@ -68,14 +64,6 @@ resources :accounts do
       end
     end
   end
-
-  get 'admin/term_deposit_types', to: 'admin#term_deposit_types', as: 'admin_term_deposit_types'
-  get 'admin/term_deposit_types/new', to: 'admin#new_term_deposit_type', as: 'admin_new_term_deposit_type'
-  post 'admin/term_deposit_types', to: 'admin#create_term_deposit_type', as: 'admin_create_term_deposit_type'
-  get 'admin/term_deposit_types/:id/edit', to: 'admin#edit_term_deposit_type', as: 'admin_edit_term_deposit_type'
-  patch 'admin/term_deposit_types/:id', to: 'admin#update_term_deposit_type', as: 'admin_update_term_deposit_type'
-  delete 'admin/term_deposit_types/:id', to: 'admin#destroy_term_deposit_type', as: 'admin_destroy_term_deposit_type'
-  patch 'admin/term_deposit_types/:id/toggle', to: 'admin#toggle_term_deposit_type', as: 'admin_toggle_term_deposit_type'
 
   # Admin routes for super_admin
   get 'admin', to: 'admin#dashboard'

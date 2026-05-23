@@ -1,9 +1,12 @@
 class MembersController < ApplicationController
-  before_action :set_member
+  before_action :set_member, except: [:search_all]
+  skip_before_action :authenticate_user!, only: [:search_all]
+  skip_before_action :set_current_user, only: [:search_all]
+  
   before_action :authorize_edit, only: [:edit, :update]
 
   def index
-    @q = Member.ransack(params[:q])
+    @q = Current.user.head_office_user? ? Member.ransack(params[:q]) : Current.branch.members.ransack(params[:q])
     @members = @q.result(distinct: true)
   end
 
@@ -163,6 +166,13 @@ class MembersController < ApplicationController
       *permitted_params,
       memberships_attributes: permitted_membership_params
     )
+  end
+
+  def search_all
+    members = Member.order(:name).map do |m|
+      { id: m.id, name: m.name, father_or_husband_name: m.father_or_husband_name }
+    end
+    render json: members
   end
 end
  

@@ -1,0 +1,190 @@
+<style>
+  @font-face { font-family: "Baloo"; src: url("https://fonts.gstatic.com/s/balootamma2/v2/vEFK2_hCAgcR46PaajtrYlBbd7wf8tK1W77HtMo.ttf") format("truetype"); }
+  body { font-family: "Baloo", Arial, sans-serif; font-size: 14px; }
+  .header-table { width: 100%; border: 0; margin-bottom: 10px; }
+  .header-text h1 { font-size: 24px; font-weight: bold; margin: 0; color: #b30000; }
+  .header-text h2 { font-size: 20px; margin: 4px 0; }
+  .header-text h3 { font-size: 18px; font-weight: bold; margin: 6px 0; }
+  .header-text p { font-size: 14px; margin: 3px 0; }
+  .header { text-align: center; margin-bottom: 15px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+  th, td { border: 1px solid #aaa; padding: 6px 10px; font-size: 13px; }
+  th { background: #f2f2f2; font-weight: bold; }
+  .no-border td { border: 0; padding: 4px 8px; }
+  .section-title { text-align: center; font-weight: bold; text-decoration: underline; margin: 15px 0 8px; font-size: 15px; }
+  .sign-box { height: 55px; border-bottom: 2px solid #000; margin: 5px 20px; }
+  p { font-size: 14px; margin: 6px 0; }
+</style>
+
+<table class="header-table no-border">
+  <tr>
+    <td style="width:120px; vertical-align:middle;">
+      <%= wicked_pdf_image_tag asset_url("logo.png"), alt: "Logo", style: "width:150px; height:150px;" %>
+    </td>
+    <td class="header-text" style="text-align:center; vertical-align:middle;">
+      <h1>MATHRUBHOOMI SOUHARDA SAHAKARI SANGHA LTD</h1>
+      <h2>ಮಾತೃಭೂಮಿ ಸೌಹಾರ್ದ ಸಹಕಾರಿ ಸಂಘ ನಿಯಮಿತ</h2>
+      <p>H.O. Mathrudhama Gurupura-Kaikamba, Kinnikambala, Mangalore-574 151.</p>
+      <p>ಕೇಂದ್ರ ಕಛೇರಿ: ಮಾತೃಧಾಮ ಗುರುಪುರ-ಕೈಕಂಬ ಮಂಗಳೂರು 574151</p>
+      <p>Phone: 9606912823</p>
+      <h3>Member Self Help Group-Savings Account Opening Forms</h3>
+    </td>
+  </tr>
+</table>
+
+<hr style="border:1px solid #aaa; margin-bottom:10px;"/>
+
+<p>To,<br/>The Branch Manager<br/><strong><%= @shg_account.branch %></strong> Branch</p>
+
+<div style="text-align:right; margin-bottom:10px;">
+  <table style="width:auto; margin-left:auto;">
+    <tr>
+      <td style="font-size:14px;"><strong>SHG Gender Code (M/F/Mixed)</strong></td>
+      <td style="min-width:120px; font-size:14px;"><%= @shg_account.gender_code %></td>
+    </tr>
+  </table>
+</div>
+
+<p style="text-align:center; font-weight:bold; font-size:15px;">Sub: Application For SHG SB Account Opening</p>
+<p>Dear Madam/Sir,</p>
+<p>I/We request to you open a Saving Account in name of our Self Help Group. We agreed to abide by the rules and regulations of the Sahakari related to Savings Account.</p>
+
+<table>
+  <tr><td style="width:30%;"><strong>Name Of SHG</strong></td><td><%= @shg_account.shg_name %></td></tr>
+  <tr><td><strong>Date Of Formation</strong></td><td><%= @shg_account.date_of_formation&.strftime('%d-%m-%Y') %></td></tr>
+  <tr><td><strong>Number Of Members</strong></td><td><%= @shg_account.number_of_members %></td></tr>
+  <tr><td><strong>Address</strong></td><td><%= @shg_account.shg_address %></td></tr>
+</table>
+
+<p>The Savings account will be operated by Joint Signature of any two among the following representatives of our Self Help Group.</p>
+
+<table>
+  <tr><th style="width:20%;"></th><th style="text-align:center;">President</th><th style="text-align:center;">Secretary</th></tr>
+  <tr><td><strong>Name</strong></td><td><%= @shg_account.president_name %></td><td><%= @shg_account.secretary_name %></td></tr>
+  <tr><td><strong>Age</strong></td><td><%= @shg_account.president_age %></td><td><%= @shg_account.secretary_age %></td></tr>
+  <tr><td><strong>Designation</strong></td><td><%= @shg_account.president_designation %></td><td><%= @shg_account.secretary_designation %></td></tr>
+  <tr><td><strong>Address</strong></td><td><%= @shg_account.president_address %></td><td><%= @shg_account.secretary_address %></td></tr>
+  <tr><td><strong>Mobile</strong></td><td><%= @shg_account.president_mobile %></td><td><%= @shg_account.secretary_mobile %></td></tr>
+</table>
+
+<table>
+  <tr><th style="width:20%;"></th><th style="text-align:center;">President</th><th style="text-align:center;">Secretary</th></tr>
+  <tr>
+    <td><strong>KYC Documents Provided</strong></td>
+    <td style="font-size:13px;">
+      <strong>Enclosed copy of address &amp; ID Proof</strong><br/>
+      ☐ Adhar Card &nbsp; ☐ Pancard &nbsp; ☐ Voter ID &nbsp; ☐ DL<br/>
+      Any Other documents accepted by Sahakari(Specify)....................
+    </td>
+    <td style="font-size:13px;">
+      <strong>Enclosed copy of address &amp; ID Proof</strong><br/>
+      ☐ Adhar Card &nbsp; ☐ Pancard &nbsp; ☐ Voter ID &nbsp; ☐ DL<br/>
+      Any Other documents accepted by Sahakari(Specify)....................
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Specimen Signature / Thumb Impression</strong></td>
+    <td style="height:70px; font-size:13px;">Signature / Thumb Impression<div class="sign-box"></div></td>
+    <td style="height:70px; font-size:13px;">Signature / Thumb Impression<div class="sign-box"></div></td>
+  </tr>
+</table>
+
+<p>We hereby declare that the above information is true and correct. We have agreed to the terms and conditions and also agree to abide by any amendments to the terms and conditions as may be stipulated by the Sahakari from time to time.</p>
+<p>Yours faithfully,</p>
+
+<table class="no-border">
+  <tr>
+    <td style="text-align:center; width:50%;">
+      <div class="sign-box"></div>
+      <strong>1. President Signature</strong>
+    </td>
+    <td style="text-align:center; width:50%;">
+      <div class="sign-box"></div>
+      <strong>2. Secretary Signature</strong>
+    </td>
+  </tr>
+</table>
+
+<table class="no-border">
+  <tr>
+    <td>Date: <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></td>
+    <td>Place: <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></td>
+  </tr>
+</table>
+
+<p><strong>Enclosure:-</strong><br/>
+1. Copy Of Resolution by SHG to open Savings Account<br/>
+2. Photographs of authorised representatives<br/>
+3. Copy Of ID and address proof of authorised representatives</p>
+
+<div class="section-title">For Sahakari's Use Only</div>
+<p>1. The applicant has affixed his/her Signature or Thumb print as the case may be in my presence ………………</p>
+<p>2. I have explained the rules/regulations to the applicant ………………</p>
+<p>3. Account has been opened on <strong><%= @shg_account.account_opened_on %></strong></p>
+<table class="no-border">
+  <tr>
+    <td>Date: <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></td>
+    <td>Officer: <strong><%= @shg_account.officer_name %></strong></td>
+  </tr>
+</table>
+
+<div class="section-title">Resolution by SHG For Opening Savings Account</div>
+<table>
+  <tr><td style="width:35%;"><strong>Name Of SHG</strong></td><td><%= @shg_account.shg_name %></td></tr>
+  <tr><td><strong>Date Of Formation</strong></td><td><%= @shg_account.date_of_formation&.strftime('%d-%m-%Y') %></td></tr>
+  <tr><td><strong>Number Of Members</strong></td><td><%= @shg_account.number_of_members %></td></tr>
+  <tr><td><strong>Address</strong></td><td style="height:50px;"><%= @shg_account.shg_address %></td></tr>
+</table>
+
+<div class="section-title">Resolution For Opening Members SHG Savings Account <span style="color:red;">(MANUAL OPTION)</span></div>
+<p style="text-align:justify;">Today on ………………(Date) at the meeting of ………………………(Name Of Shg) at ………………………………(Meeting Place Of Shg/address) in presence of all its members, it is resolved that our ………………………( Name Of Shg) will open a Savings Account in Mathrubhoomi Souharda Sahakari Sangha ………………Branch. It has also been further resolved that Shri/Smt ………………………(Designation ………………………) and Shri/Smt ………………………(Designation ………………………) will sign all the necessary documents related to the opening Savings account representatives on behalf of ………………………(Name Of Shg) Transaction in the Savings account of the group will be done by Joint Signature Of any two among the above mentioned representatives.</p>
+<p>The above resolution for <strong>Opening</strong> Member SHG <strong>Savings Account</strong> is agreed and signed by all SHG members (Seperate Sheet Enclosed)</p>
+
+<table class="no-border">
+  <tr>
+    <td style="text-align:center; width:50%;">
+      <div class="sign-box"></div>
+      Signature/Thumb Impression
+    </td>
+    <td style="text-align:center; width:50%;">
+      <div class="sign-box"></div>
+      Signature/Thumb Impression
+    </td>
+  </tr>
+</table>
+
+<div class="section-title">Resolution for Opening Savings account and agreed by SHG members</div>
+<p>We all the members Of ………………………………SHG agree to the above decision</p>
+<table style="font-size:12px;">
+  <thead>
+    <tr>
+      <th style="width:4%;">Si No</th>
+      <th style="width:18%;">Name Of Shg Members</th>
+      <th style="width:12%;">Mob</th>
+      <th style="width:6%;">Age</th>
+      <th style="width:30%;">Name Of Father/Husband &amp; Address</th>
+      <th style="width:10%;">A/C NO.</th>
+      <th style="width:20%;">Signature</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @shg.shg_members.each_with_index do |member, i| %>
+      <tr style="height:32px;">
+        <td style="text-align:center;"><%= i + 1 %></td>
+        <td><%= member.name %></td>
+        <td><%= member.mobile %></td>
+        <td style="text-align:center;"><%= member.age %></td>
+        <td><%= member.full_address %></td>
+        <td></td>
+        <td></td>
+      </tr>
+    <% end %>
+    <% remaining = [20 - @shg.shg_members.count, 0].max %>
+    <% (@shg.shg_members.count + 1..@shg.shg_members.count + remaining).each do |n| %>
+      <tr style="height:32px;">
+        <td style="text-align:center;"><%= n %></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

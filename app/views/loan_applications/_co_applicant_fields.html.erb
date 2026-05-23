@@ -1,8 +1,8 @@
 <% unique_index ||= Time.now.to_i + rand(1000) %>
 <% member_fields_disabled = !can_edit_member_fields? %>
 
+<div data-member-id="<%= member.id %>" class="mb-4">
 <h6><strong>Details Of Co-Applicant <%= "#{member.name}" %></strong></h6>
-<div data-coapplicant-id="<%= member.id %>" class="mb-4">
 
 
   <%= hidden_field_tag "loan_application[loan_application_co_applicants_attributes][#{unique_index}][member_id]", member.id %>

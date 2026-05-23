@@ -1,0 +1,44 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Term Deposit Types</h1>
+    <%= link_to "Add New Type of Term Deposit", admin_new_term_deposit_type_path, class: "btn btn-success" %>
+  </div>
+  <div class="row mb-2">
+    <div class="col-12 text-end">
+      <span class="text-muted">Total: <%= @term_deposit_types.count %> types configured</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Applications</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @term_deposit_types.each do |t| %>
+            <tr class="<%= 'table-secondary' unless t.active? %>">
+              <td><strong><%= t.name %></strong></td>
+              <td><span class="badge bg-info text-dark"><%= Account.where(term_deposit_type: t.name).count %></span></td>
+              <td><span class="badge bg-<%= t.active? ? 'success' : 'danger' %>"><%= t.active? ? 'Active' : 'Inactive' %></span></td>
+              <td><%= t.created_at.strftime("%d %b %Y") %></td>
+              <td>
+                <%= link_to "Edit", admin_edit_term_deposit_type_path(t), class: "btn btn-sm btn-outline-secondary" %>
+                <%= link_to t.active? ? "Deactivate" : "Activate", admin_toggle_term_deposit_type_path(t), data: { turbo_method: :patch }, class: "btn btn-sm btn-outline-#{t.active? ? 'warning' : 'success'}" %>
+                <%= button_to "Delete", admin_destroy_term_deposit_type_path(t), method: :delete, form: { data: { turbo_confirm: "Are you sure?" } }, class: "btn btn-sm btn-outline-danger d-inline" %>
+              </td>
+            </tr>
+          <% end %>
+          <% if @term_deposit_types.empty? %>
+            <tr><td colspan="5" class="text-center py-4">No types configured yet.</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

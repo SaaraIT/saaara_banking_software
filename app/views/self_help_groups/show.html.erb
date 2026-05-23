@@ -1,4 +1,10 @@
 <div class="d-flex justify-content-between align-items-center mt-3">
+  <% if @self_help_group.shg_accounts.exists? %>
+    <%= link_to "View Account", self_help_group_shg_account_path(@self_help_group, @self_help_group.shg_accounts.last), class: "btn btn-info btn-sm" %>
+  <% else %>
+    <%= link_to "Create Account", new_self_help_group_shg_account_path(@self_help_group), class: "btn btn-success btn-sm" %>
+  <% end %>
+
   <h5 class="mb-0"><%= @self_help_group.name %></h5>
   
 </div>

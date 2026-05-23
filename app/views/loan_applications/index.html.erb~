@@ -1,0 +1,212 @@
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <h5 class="mb-0">Loan Applications</h5>
+</div>
+<br />
+<%= search_form_for @q do |f| %>
+ <table class='table table-bordered search-table' >
+   <tr>
+      <th> <label> Applicant Name Contains: </label>
+       <%= f.search_field :member_name_cont %> </th>
+      <th> <label> Mobile Number Contains: </label>  
+       <%= f.search_field :member_mobile_number_cont %> </th>
+      <th> <label> Aadhar Contains: </label> 
+       <%= f.search_field :member_aadhaar_number_cont %> </th>
+       <th> <label> R No: </label>
+       <%= f.search_field :r_no_eq %> </th>
+      <th rowspan="2">  <%= f.submit "Search", class: 'btn btn-secondary btn-sm' %> </th>
+   </tr>
+ 
+<% end %>
+<table class="table loan-table table-bordered list-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Applicant Name</th>
+      <th>R No</th>
+      <th>Requested Amount</th>
+      <th>Term</th>
+      <th>Rate of Interest</th>
+      <th>Created At</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @loan_applications.each_with_index do |loan, index| %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= loan.member.name %></td>
+        <td><%= loan.r_no %></td>
+        <td>₹ <%= loan.loan_amount %></td>
+        <td><%= loan.loan_term %></td>
+        <td><%= loan.int_rate %>%</td>
+        <td><%= loan.cooperative_branch.try(:name) %></td>
+        <td>
+          <%= link_to "Print", member_loan_application_path(loan.member, loan, format: :pdf), class: "btn btn-info btn-sm" %>
+          <%= loan_edit_button(loan, edit_member_loan_application_path(loan.member, loan), btn_class: "btn btn-warning btn-sm") %>
+          <%= link_to "Show", member_loan_application_path(loan.member, loan), class: 'btn btn-sm btn-secondary' %>
+          <%= link_to "Member", loan.member, class: "btn btn-secondary btn-sm" %>
+          <button class="btn btn-primary btn-sm"
+                  onclick="openGuarantorModal('<%= loan.member.id %>', '<%= loan.id %>', '<%= loan.guarantor_undertakings.first&.guarantor&.name %>', '<%= loan.guarantor_undertakings.first&.id %>')">
+            Edit Guarantor
+          </button>
+        </td>
+      </tr>
+    <% end %>
+    <% if @loan_applications.empty? %>
+      <tr>
+        <td colspan="8" class="text-center">No loan applications found</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<!-- Guarantor Modal -->
+<div class="modal fade" id="guarantorModal" tabindex="-1" aria-labelledby="guarantorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="guarantorModalLabel">Edit Guarantor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Search -->
+        <div class="mb-3">
+          <input type="text" id="guarantorSearch" class="form-control" placeholder="Search by name or mobile number..." oninput="searchGuarantors()">
+        </div>
+
+        <!-- Current Guarantor -->
+        <div id="currentGuarantorInfo" class="alert alert-info mb-3" style="display:none;">
+          Current Guarantor: <strong id="currentGuarantorName"></strong>
+        </div>
+
+        <!-- Search Results -->
+        <div id="guarantorResults" class="list-group" style="max-height: 300px; overflow-y: auto;"></div>
+
+        <!-- Selected Guarantor -->
+        <div id="selectedGuarantorInfo" class="alert alert-success mt-3" style="display:none;">
+          Selected: <strong id="selectedGuarantorName"></strong>
+        </div>
+
+        <input type="hidden" id="selectedGuarantorId" value="">
+        <input type="hidden" id="currentMemberId" value="">
+        <input type="hidden" id="currentLoanId" value="">
+        <input type="hidden" id="currentGuarantorUndertakingId" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveGuarantor()">Save Guarantor</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let searchTimeout;
+
+  function openGuarantorModal(memberId, loanId, currentGuarantorName, undertakingId) {
+    document.getElementById('currentMemberId').value = memberId;
+    document.getElementById('currentLoanId').value = loanId;
+    document.getElementById('currentGuarantorUndertakingId').value = undertakingId || '';
+    document.getElementById('selectedGuarantorId').value = '';
+    document.getElementById('selectedGuarantorInfo').style.display = 'none';
+    document.getElementById('guarantorSearch').value = '';
+    document.getElementById('guarantorResults').innerHTML = '';
+
+    if (currentGuarantorName && currentGuarantorName !== '') {
+      document.getElementById('currentGuarantorName').innerText = currentGuarantorName;
+      document.getElementById('currentGuarantorInfo').style.display = 'block';
+    } else {
+      document.getElementById('currentGuarantorInfo').style.display = 'none';
+    }
+
+    var modal = new bootstrap.Modal(document.getElementById('guarantorModal'));
+    modal.show();
+  }
+
+  function searchGuarantors() {
+    clearTimeout(searchTimeout);
+    const query = document.getElementById('guarantorSearch').value;
+    if (query.length < 2) {
+      document.getElementById('guarantorResults').innerHTML = '';
+      return;
+    }
+    searchTimeout = setTimeout(() => {
+      const memberId = document.getElementById('currentMemberId').value;
+      const loanId = document.getElementById('currentLoanId').value;
+      fetch(`/members/search?q=${encodeURIComponent(query)}&member=${memberId}&loan=${loanId}`)
+        .then(res => res.json())
+        .then(members => {
+          const container = document.getElementById('guarantorResults');
+          container.innerHTML = '';
+          if (members.length === 0) {
+            container.innerHTML = '<div class="list-group-item">No members found</div>';
+            return;
+          }
+          members.forEach(m => {
+            const item = document.createElement('a');
+            item.href = '#';
+            item.className = 'list-group-item list-group-item-action';
+            item.innerHTML = `<strong>${m.name}</strong> &nbsp; Mobile: ${m.mobile_number || '-'} &nbsp; Address: ${m.address || '-'}`;
+            item.onclick = (e) => {
+              e.preventDefault();
+              selectGuarantor(m.id, m.name);
+            };
+            container.appendChild(item);
+          });
+        });
+    }, 300);
+  }
+
+  function selectGuarantor(id, name) {
+    document.getElementById('selectedGuarantorId').value = id;
+    document.getElementById('selectedGuarantorName').innerText = name;
+    document.getElementById('selectedGuarantorInfo').style.display = 'block';
+    document.getElementById('guarantorResults').innerHTML = '';
+    document.getElementById('guarantorSearch').value = name;
+  }
+
+  function saveGuarantor() {
+    const guarantorId = document.getElementById('selectedGuarantorId').value;
+    const memberId = document.getElementById('currentMemberId').value;
+    const loanId = document.getElementById('currentLoanId').value;
+    const undertakingId = document.getElementById('currentGuarantorUndertakingId').value;
+
+    if (!guarantorId) {
+      alert('Please select a guarantor first.');
+      return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    let url, method;
+
+    if (undertakingId && undertakingId !== '') {
+      // Update existing
+      url = `/members/${memberId}/loan_applications/${loanId}/guarantor_undertakings/${undertakingId}`;
+      method = 'PATCH';
+    } else {
+      // Create new
+      url = `/members/${memberId}/loan_applications/${loanId}/guarantor_undertakings`;
+      method = 'POST';
+    }
+
+    fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken
+      },
+      body: JSON.stringify({
+        guarantor_undertaking: {
+          guarantor_id: guarantorId
+        }
+      })
+    }).then(res => {
+      if (res.ok || res.redirected) {
+        bootstrap.Modal.getInstance(document.getElementById('guarantorModal')).hide();
+        window.location.reload();
+      } else {
+        res.text().then(t => alert('Error saving guarantor: ' + t));
+      }
+    }).catch(err => alert('Error: ' + err));
+  }
+</script>

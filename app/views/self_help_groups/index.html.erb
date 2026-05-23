@@ -3,6 +3,15 @@
   <%= link_to "New Membership", new_self_help_group_path, class: "btn btn-primary" %>
 </div>
 <br />
+<%= form_with url: self_help_groups_path, method: :get, local: true, class: "mb-3" do %>
+  <div class="input-group" style="max-width: 400px;">
+    <input type="text" name="q" value="<%= params[:q] %>" class="form-control" placeholder="Search by name...">
+    <button class="btn btn-outline-secondary" type="submit">Search</button>
+    <% if params[:q].present? %>
+      <%= link_to "Clear", self_help_groups_path, class: "btn btn-outline-danger" %>
+    <% end %>
+  </div>
+<% end %>
 
  
 
@@ -28,6 +37,7 @@
        
           <%= link_to "Show", self_help_group_path(shg), class: 'btn btn-sm btn-secondary' %>
           <%= link_to "Create Loan Application", new_self_help_group_shg_loan_application_path(shg), class: 'btn btn-sm btn-secondary' %>
+          <%= link_to "Accounts", self_help_group_shg_accounts_path(shg), class: "btn btn-sm btn-success" %>
         </td>
       </tr>
     <% end %>

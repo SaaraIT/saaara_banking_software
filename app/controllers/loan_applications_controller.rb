@@ -2,7 +2,7 @@ class LoanApplicationsController < ApplicationController
   include LoanEditPermission
 
   before_action :set_member, only: %i[show edit new index update]
-  prepend_before_action :set_loan_application, only: %i[show edit update destroy]
+  prepend_before_action :set_loan_application, only: %i[show edit update destroy update_co_obligants]
 
   def index
     if(current_user.super_admin? || current_user.section_head?)
@@ -68,6 +68,27 @@ class LoanApplicationsController < ApplicationController
     else
       render :edit
     end
+  end
+
+  def update_co_obligants
+    guarantor_ids = params[:guarantor_ids].map(&:to_i)
+    # Delete ALL existing guarantor_undertakings and co_obligants first
+    @loan_application.guarantor_undertakings.destroy_all
+    @loan_application.co_obligants.destroy_all
+    # Create new ones
+    guarantor_ids.each_with_index do |id, index|
+      @loan_application.guarantor_undertakings.create(
+        guarantor_id: id,
+        member_id: @loan_application.member_id,
+        cooperative_branch_id: @loan_application.cooperative_branch_id,
+        creator_id: current_user.id
+      )
+      @loan_application.co_obligants.create(
+        member_id: id,
+        position: index + 1
+      )
+    end
+    render json: { success: true }
   end
 
   def show

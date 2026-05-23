@@ -1,0 +1,285 @@
+
+<% def calc_duration(from, to)
+  return "" unless from.present? && to.present?
+  from_date = from.is_a?(Date) ? from : Date.parse(from.to_s) rescue nil
+  to_date   = to.is_a?(Date)   ? to   : Date.parse(to.to_s)   rescue nil
+  return "" unless from_date && to_date && to_date > from_date
+  years  = to_date.year  - from_date.year
+  months = to_date.month - from_date.month
+  days   = to_date.day   - from_date.day
+  if days < 0
+    months -= 1
+    days += Date.new(to_date.year, to_date.month, 1).prev_day.day
+  end
+  if months < 0
+    years  -= 1
+    months += 12
+  end
+  parts = []
+  parts << "#{years} #{"Year".pluralize(years)}"   if years  > 0
+  parts << "#{months} #{"Month".pluralize(months)}" if months > 0
+  parts << "#{days} #{"Day".pluralize(days)}"       if days   > 0
+  parts.any? ? "( #{parts.join(" ")} )" : ""
+end %>
+<div class="mb-3">
+  <%= link_to "Edit Account", edit_member_account_path(@member, @account), class: "btn btn-warning" %>
+  &nbsp;
+  <%= link_to "Print", member_account_path(@member, @account, format: :pdf), class: "btn btn-primary" %>
+  &nbsp;
+  <%= link_to "Back", member_accounts_path(@member), class: "btn btn-secondary" %>
+</div>
+
+<style>
+  .acc-section { border: 1px solid #aaa; padding: 12px 15px; margin-bottom: 20px; }
+  .acc-section h5 { text-decoration: underline; text-align: center; margin-bottom: 15px; font-weight: bold; }
+  .acc-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .acc-table th, .acc-table td { border: 1px solid #aaa; padding: 6px 8px; font-size: 14px; }
+  .acc-table th { background: #f5f5f5; font-weight: 600; }
+  .header-table { width: 100%; margin-bottom: 10px; }
+</style>
+
+<%# HEADER %>
+<table class="header-table">
+  <tr>
+    <td style="width:120px"><%= image_tag "logo.png", style: "width:110px" %></td>
+    <td style="text-align:center">
+      <h4 style="margin:0; font-size:22px;">MATHRUBHOOMI SOUHARDA SAHAKARI SANGHA LTD</h4>
+      <p style="margin:2px 0; font-size:13px">REG.NO.526/2005-06</p>
+      <p style="margin:2px 0; font-size:12px">Regd.Office: "Mathrudhama" Gurupura-Kaikamba Kinnikambala Mangalore D.K.-574151 Ph: 9606912823</p>
+      <h5 style="margin-top:6px; font-size:18px;">APPLICATION FORM FOR ACCOUNT OPENING</h5>
+    </td>
+  </tr>
+</table>
+
+<div style="display:flex; justify-content:space-between; margin-bottom:10px">
+  <div>Date: <strong><%= @account.date %></strong></div>
+  <div>Account Number: <strong><%= @account.account_number %></strong></div>
+  <div>Branch: <strong><%= @account.branch %></strong></div>
+</div>
+
+<%# MEMBER NOs %>
+<div class="acc-section">
+  <table class="acc-table">
+    <tr><th></th><th>1st Applicant</th><th>2nd Applicant</th><th>3rd Applicant</th></tr>
+    <tr>
+      <td><strong>Member No</strong></td>
+      <td><%= @account.member.member_no %></td>
+      <td><%= @account.app2_name %></td>
+      <td><%= @account.app3_name %></td>
+    </tr>
+  </table>
+  <p>I/We initially ₹ <strong><%= @account.initial_deposit %></strong> (in words) <strong><%= @account.initial_deposit_words %></strong></p>
+  <p><strong>Account Type:</strong> <%= @account.account_type %></p>
+</div>
+
+<%# TERM DEPOSIT %>
+<div class="acc-section">
+  <h5>Term Deposit</h5>
+  <table class="acc-table">
+    <tr><td style="width:40%"><strong>Type</strong></td><td><%= @account.term_deposit_type %></td></tr>
+    <tr><td><strong>Deposit Amount</strong></td><td>₹ <%= @account.term_deposit_amount %></td></tr>
+    <tr><td><strong>Deposit Period</strong></td><td>From: <%= @account.term_deposit_period_d %> To: <%= @account.term_deposit_period_m %> <strong style="color:#1a6b3c;"><%= calc_duration(@account.term_deposit_period_d, @account.term_deposit_period_m) %></strong></td></tr>
+    <tr><td><strong>Interest Payable</strong></td><td><%= @account.term_interest_payable %></td></tr>
+    <tr><td><strong>Credit to A/c No</strong></td><td><%= @account.term_interest_credit_ac %></td></tr>
+    <tr><td><strong>Rate of Interest</strong></td><td><%= @account.term_interest_rate %> %</td></tr>
+    <tr><td><strong>Payment</strong></td><td><%= @account.term_interest_payment %></td></tr>
+  </table>
+</div>
+
+<%# RECURRING DEPOSIT %>
+<div class="acc-section">
+  <h5>Recurring Deposit</h5>
+  <table class="acc-table">
+    <tr><td style="width:40%"><strong>RD Amount</strong></td><td>₹ <%= @account.rd_deposit_amount %></td></tr>
+    <tr><td><strong>Deposit Period</strong></td><td>From: <%= @account.rd_deposit_period_m %> To: <%= @account.rd_deposit_period_y %> <strong style="color:#1a6b3c;"><%= calc_duration(@account.rd_deposit_period_m, @account.rd_deposit_period_y) %></strong></td></tr>
+    <tr><td><strong>Debit SB A/c No</strong></td><td><%= @account.rd_sb_ac_no %></td></tr>
+    <tr><td><strong>Credit RD A/c No</strong></td><td><%= @account.rd_credit_ac_no %></td></tr>
+    <tr><td><strong>Rate of Interest</strong></td><td><%= @account.rd_interest_rate %> %</td></tr>
+    <tr><td><strong>Payment</strong></td><td><%= @account.term_deposit_period_y %></td></tr>
+  </table>
+</div>
+
+<%# CUSTOMER TYPE %>
+<div class="acc-section">
+  <p><strong>Customer's Type:</strong> <%= @account.customer_type %></p>
+</div>
+
+<%# NAME OF CUSTOMERS %>
+<div class="acc-section">
+  <h5>Name of Customer's</h5>
+  <table class="acc-table">
+    <tr><th></th><th>Name</th><th>Date of Birth</th><th>Aadhaar</th><th>Sex</th></tr>
+    <tr><td><strong>1st</strong></td><td><%= @account.app1_name %></td><td><%= @account.app1_dob %></td><td><%= @account.app1_aadhaar %></td><td><%= @account.app1_sex %></td></tr>
+    <tr><td><strong>2nd</strong></td><td><%= @account.app2_name %></td><td><%= @account.app2_dob %></td><td><%= @account.app2_aadhaar %></td><td><%= @account.app2_sex %></td></tr>
+    <tr><td><strong>3rd</strong></td><td><%= @account.app3_name %></td><td><%= @account.app3_dob %></td><td><%= @account.app3_aadhaar %></td><td><%= @account.app3_sex %></td></tr>
+  </table>
+
+  <h5 style="margin-top:15px">Father/Husband/Guardian Name</h5>
+  <table class="acc-table">
+    <tr><th></th><th>Name</th><th>Relationship</th></tr>
+    <tr><td><strong>1st</strong></td><td><%= @account.app1_father_husband %></td><td><%= @account.app1_relationship %></td></tr>
+    <tr><td><strong>2nd</strong></td><td><%= @account.app2_father_husband %></td><td><%= @account.app2_relationship %></td></tr>
+    <tr><td><strong>3rd</strong></td><td><%= @account.app3_father_husband %></td><td><%= @account.app3_relationship %></td></tr>
+  </table>
+</div>
+
+<%# ADDRESS %>
+<div class="acc-section">
+  <h5>Address For Communication</h5>
+  <% [["1st", "app1"], ["2nd", "app2"], ["3rd", "app3"]].each do |label, p| %>
+    <strong><%= label %> Applicant</strong>
+    <table class="acc-table" style="margin-bottom:10px">
+      <tr><th colspan="2">Permanent Address</th><th colspan="2">Present Address</th></tr>
+      <tr>
+        <td>D.No/House Name</td><td><%= @account.send("#{p}_perm_house") %></td>
+        <td>D.No/House Name</td><td><%= @account.send("#{p}_pres_house") %></td>
+      </tr>
+      <tr>
+        <td>Place, Post & Village</td><td><%= @account.send("#{p}_perm_village") %></td>
+        <td>Place, Post & Village</td><td><%= @account.send("#{p}_pres_village") %></td>
+      </tr>
+      <tr>
+        <td>Taluk, District</td><td><%= @account.send("#{p}_perm_district") %></td>
+        <td>Taluk, District</td><td><%= @account.send("#{p}_pres_district") %></td>
+      </tr>
+      <tr>
+        <td>PIN</td><td><%= @account.send("#{p}_perm_pin") %></td>
+        <td>MOBILE</td><td><%= @account.send("#{p}_pres_mobile") %></td>
+      </tr>
+    </table>
+  <% end %>
+</div>
+
+<%# PASSPORT PHOTO & SIGNATURE %>
+<div class="acc-section">
+  <h5>Applicant Photo & Specimen Signature</h5>
+  <table class="acc-table">
+    <tr>
+      <td style="text-align:center; width:33%;">
+        <div style="width:132px; height:170px; border:1px solid #000; margin:0 auto 10px auto; display:flex; align-items:center; justify-content:center;"><span style="color:#aaa; font-size:11px;">Passport Photo</span></div>
+        <div style="width:150px; border-bottom:2px solid #000; margin:0 auto 5px auto;"></div>
+        <p><strong>1st Applicant</strong></p>
+      </td>
+      <td style="text-align:center; width:33%;">
+        <div style="width:132px; height:170px; border:1px solid #000; margin:0 auto 10px auto; display:flex; align-items:center; justify-content:center;"><span style="color:#aaa; font-size:11px;">Passport Photo</span></div>
+        <div style="width:150px; border-bottom:2px solid #000; margin:0 auto 5px auto;"></div>
+        <p><strong>2nd Applicant</strong></p>
+      </td>
+      <td style="text-align:center; width:33%;">
+        <div style="width:132px; height:170px; border:1px solid #000; margin:0 auto 10px auto; display:flex; align-items:center; justify-content:center;"><span style="color:#aaa; font-size:11px;">Passport Photo</span></div>
+        <div style="width:150px; border-bottom:2px solid #000; margin:0 auto 5px auto;"></div>
+        <p><strong>3rd Applicant</strong></p>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<%# MODE OF OPERATION %>
+<div class="acc-section">
+  <h5>Mode of Operation</h5>
+  <p><%= @account.mode_of_operation %></p>
+</div>
+
+<%# KYC %>
+<div class="acc-section">
+  <h5>KYC Identification Documents To be Submitted By Applicants</h5>
+  <table class="acc-table">
+    <tr><th>LIST 1 - Photo ID</th><th>LIST 2 - Address Proof</th></tr>
+    <tr>
+      <td>Aadhaar, PAN Card, Voter ID Card, Driving License, Identity card issued by Govt/Public authority, Letter from Employer</td>
+      <td>Passport, Ration Card, Telephone Bill, Letter from Employer, Bank account statement, Electricity Bill, Income Tax assessment, Credit Card</td>
+    </tr>
+    <tr>
+      <td><strong>Selected:</strong> <%= @account.kyc_list1 %></td>
+      <td><strong>Selected:</strong> <%= @account.kyc_list2 %></td>
+    </tr>
+  </table>
+</div>
+
+<%# DECLARATION %>
+<div class="acc-section">
+  <h5>Declaration</h5>
+  <ul style="font-size:13px; line-height:1.8;">
+    <li>I/We hereby declare that the rules governing the deposits account have been read by me/us and that I/We agreed to be bound by the rules and bye laws of the sahakari in force now</li>
+    <li>I/We hereby declare that the amount deposited in the account of my/our own</li>
+    <li>I/We declare that the account will be operated upon and the balance will be payable to myself/Either or Survivor/Anyone or depositors against joint discharge</li>
+    <li>I/We hereby undertake the minimum balance of ₹_____ in the account and also agree to maintain balance as modified by the Sahakari time to time</li>
+    <li>I/We also agree that the Sahakari got every right to close the account for non-maintenance of minimum balance</li>
+    <li>I/We do agree that the rate of interest payable by the sahakari on my/our deposit account shall be subject to the changes in the interest rates made by the Mathrubhoomi Souharda Sahakari Sangha Ltd.</li>
+    <li>Please send/do not send due date notice to my/our address</li>
+  </ul>
+  <table class="acc-table" style="margin-top:20px;">
+    <tr>
+      <td style="text-align:center; height:80px; width:33%;">
+        <div style="height:60px; border-bottom:2px solid #000; margin-bottom:5px;"></div>
+        <p>1st Applicant Specimen Signature</p>
+      </td>
+      <td style="text-align:center; height:80px; width:33%;">
+        <div style="height:60px; border-bottom:2px solid #000; margin-bottom:5px;"></div>
+        <p>2nd Applicant Specimen Signature</p>
+      </td>
+      <td style="text-align:center; height:80px; width:33%;">
+        <div style="height:60px; border-bottom:2px solid #000; margin-bottom:5px;"></div>
+        <p>3rd Applicant Specimen Signature</p>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<%# MINOR %>
+<% if @account.minor_guardian_name.present? %>
+<div class="acc-section">
+  <h5>IF Minor Account Holder</h5>
+  <table class="acc-table">
+    <tr><td style="width:40%"><strong>Name of Parent/Guardian</strong></td><td><%= @account.minor_guardian_name %></td></tr>
+    <tr><td><strong>Relationship with Minor</strong></td><td><%= @account.minor_guardian_relationship %></td></tr>
+  </table>
+  <div style="text-align:right; margin-top:15px;">
+    <div style="display:inline-block; width:220px; text-align:center; padding:10px;">
+      <div style="height:80px; border-bottom:2px solid #000; margin-bottom:8px;"></div>
+      <p style="font-size:13px; margin:0;"><strong>Guardian Signature</strong></p>
+    </div>
+  </div>
+</div>
+<% end %>
+
+<%# PAGE 2 HEADER %>
+<div style="border-top: 3px solid #000; margin: 30px 0 20px 0;"></div>
+<table class="header-table">
+  <tr>
+    <td style="width:120px"><%= image_tag "logo.png", style: "width:110px" %></td>
+    <td style="text-align:center">
+      <h4 style="margin:0; font-size:22px;">MATHRUBHOOMI SOUHARDA SAHAKARI SANGHA LTD</h4>
+      <p style="margin:2px 0; font-size:13px">REG.NO.526/2005-06</p>
+      <p style="margin:2px 0; font-size:12px">Regd.Office: "Mathrudhama" Gurupura-Kaikamba Kinnikambala Mangalore D.K.-574151 Ph: 9606912823</p>
+    </td>
+  </tr>
+</table>
+<p><strong>Branch:</strong> <%= @account.branch %></p>
+
+<%# CUSTOMER PROFILE %>
+<div class="acc-section">
+  <h5>Customer Profile</h5>
+  <table class="acc-table">
+    <tr><td style="width:50%"><strong>Marital Status</strong></td><td><%= @account.marital_status %></td></tr>
+    <tr><td><strong>Religion</strong></td><td><%= @account.religion %></td></tr>
+    <tr><td><strong>Education</strong></td><td><%= @account.education %></td></tr>
+    <tr><td><strong>Occupation</strong></td><td><%= @account.occupation %></td></tr>
+    <tr><td><strong>If Salaried - Organisation & Designation</strong></td><td><%= @account.organisation_name %></td></tr>
+    <tr><td><strong>If Self Employed - Nature of Business</strong></td><td><%= @account.nature_of_business %></td></tr>
+    <tr><td><strong>If Self Employed - Profession</strong></td><td><%= @account.profession %></td></tr>
+    <tr><td><strong>Annual Household Income</strong></td><td><%= @account.annual_income %></td></tr>
+    <tr><td><strong>Asset Ownership</strong></td><td><%= @account.asset_ownership %></td></tr>
+    <tr><td><strong>Preferred Investment</strong></td><td><%= @account.preferred_investment %></td></tr>
+    <tr><td><strong>Loans</strong></td><td><%= @account.loans_info %></td></tr>
+    <tr><td><strong>Insurance</strong></td><td><%= @account.insurance %></td></tr>
+  </table>
+</div>
+
+<%# CUSTOMER SIGNATURE %>
+<div style="text-align:right; margin-top:15px; margin-bottom:20px;">
+  <div style="display:inline-block; width:220px; text-align:center; padding:10px;">
+    <div style="height:80px; border-bottom:2px solid #000; margin-bottom:8px;"></div>
+    <p style="font-size:13px; margin:0;"><strong>Customer Signature</strong></p>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<div class="mb-3">
+  <%= link_to "Print", self_help_group_shg_account_path(@shg, @shg_account, format: :pdf), class: "btn btn-primary" %>
+  &nbsp;
+  <%= link_to "Back", self_help_groups_path, class: "btn btn-secondary" %>
+</div>
+<%= render 'form', action: :edit %>

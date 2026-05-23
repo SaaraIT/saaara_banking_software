@@ -1,0 +1,349 @@
+<style>
+  .acc-section { border: 1px solid #aaa; padding: 12px 15px; margin-bottom: 20px; }
+  .acc-section h5 { text-decoration: underline; text-align: center; margin-bottom: 15px; font-weight: bold; }
+  .acc-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .acc-table th, .acc-table td { border: 1px solid #aaa; padding: 6px 8px; font-size: 14px; }
+  .acc-table th { background: #f5f5f5; font-weight: 600; }
+  .acc-input { border: none; border-bottom: 1px solid #333; outline: none; width: 100%; background: transparent; padding: 2px 4px; }
+  .header-table { width: 100%; margin-bottom: 10px; }
+  .form-check-inline { margin-right: 15px; }
+</style>
+
+<% url = action == :new ? member_accounts_path(@member) : member_account_path(@member, @account) %>
+<% method = action == :new ? :post : :patch %>
+
+<%= form_with model: [@member, account], url: url, method: method, local: true do |f| %>
+  <% if account.errors.any? %>
+    <div class="alert alert-danger">
+      <% account.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# ── HEADER ── %>
+  <table class="header-table">
+    <tr>
+      <td style="width:100px"><%= image_tag "logo.png", style: "width:80px" %></td>
+      <td style="text-align:center">
+        <h4 style="margin:0">MATHRUBHOOMI SOUHARDA SAHAKARI SANGHA LTD</h4>
+        <p style="margin:2px 0; font-size:13px">REG.NO.526/2005-06</p>
+        <p style="margin:2px 0; font-size:12px">Regd.Office: "Mathrudhama" Gurupura-Kaikamba Kinnikambala Mangalore D.K.-574151 Ph: 9606912823</p>
+        <h5 style="margin-top:6px">APPLICATION FORM FOR ACCOUNT OPENING</h5>
+      </td>
+    </tr>
+  </table>
+
+  <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+    <div>
+      Date: <%= f.date_field :date, class: "acc-input", style: "width:160px", value: Date.today %>
+    </div>
+    <div>
+      Account Number: <%= f.text_field :account_number, class: "acc-input", style: "width:180px" %>
+    </div>
+    <div>
+      Branch: <%= f.text_field :branch, class: "acc-input", style: "width:160px", value: Current.branch.try(:name) %>
+    </div>
+  </div>
+
+  <%# ── MEMBER NOs ── %>
+  <div class="acc-section">
+    <table class="acc-table">
+      <tr>
+        <th></th><th>1st Applicant</th><th>2nd Applicant</th><th>3rd Applicant</th>
+      </tr>
+      <tr>
+        <td><strong>Member No (From Membership Form)</strong></td>
+        <td><%= @member.member_no %></td>
+        <td><input class="acc-input" disabled placeholder="—"></td>
+        <td><input class="acc-input" disabled placeholder="—"></td>
+      </tr>
+    </table>
+    <p>I/We request you to open an account with you for which I/We initially
+      ₹ <%= f.number_field :initial_deposit, class: "acc-input", style: "width:120px", step: "0.01" %>
+      (in words) <%= f.text_field :initial_deposit_words, class: "acc-input", style: "width:300px" %>
+    </p>
+
+    <%# Account Type %>
+    <strong>Account Type:</strong>&nbsp;
+    <% [["Members Savings Account","savings"],["Current Account","current"],["Other Account","other"]].each do |label, val| %>
+      <label class="form-check-inline">
+        <%= f.radio_button :account_type, val %>  <%= label %>
+      </label>
+    <% end %>
+  </div>
+
+  <%# ── TERM DEPOSIT ── %>
+  <div class="acc-section">
+    <h5>Term Deposit / Recurring Deposit</h5>
+    <table class="acc-table">
+      <tr>
+        <th>Type of Term Deposit</th>
+        <td><%= f.text_field :term_deposit_type, class: "acc-input" %></td>
+        <th>Recurring Deposit</th>
+      </tr>
+      <tr>
+        <td>Deposit Amount</td>
+        <td><%= f.number_field :term_deposit_amount, class: "acc-input", step: "0.01" %></td>
+        <td>RD Amount: <%= f.number_field :rd_deposit_amount, class: "acc-input", step: "0.01" %></td>
+      </tr>
+      <tr>
+        <td>Deposit Period</td>
+        <td>
+          D: <%= f.number_field :term_deposit_period_d, class: "acc-input", style: "width:50px" %>
+          M: <%= f.number_field :term_deposit_period_m, class: "acc-input", style: "width:50px" %>
+          Y: <%= f.number_field :term_deposit_period_y, class: "acc-input", style: "width:50px" %>
+        </td>
+        <td>
+          M: <%= f.number_field :rd_deposit_period_m, class: "acc-input", style: "width:50px" %>
+          Y: <%= f.number_field :rd_deposit_period_y, class: "acc-input", style: "width:50px" %>
+        </td>
+      </tr>
+      <tr>
+        <td>Interest Payable</td>
+        <td>
+          <%= f.select :term_interest_payable, ["Monthly", "Quarterly", "On Maturity"], { prompt: "Select" }, class: "form-select form-select-sm" %>
+        </td>
+        <td>
+          Standing Instruction: Debit SB A/c No. <%= f.text_field :rd_sb_ac_no, class: "acc-input", style: "width:120px" %>
+          Credit RD A/c No. <%= f.text_field :rd_credit_ac_no, class: "acc-input", style: "width:120px" %>
+        </td>
+      </tr>
+      <tr>
+        <td>For Interest - Credit to A/c No.</td>
+        <td><%= f.text_field :term_interest_credit_ac, class: "acc-input" %></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Payment</td>
+        <td>
+          <%= f.select :term_interest_payment, ["Issue DD/PO", "By Cash"], { prompt: "Select" }, class: "form-select form-select-sm" %>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <%# ── CUSTOMER TYPE ── %>
+  <div class="acc-section">
+    <h5>Customer's Type</h5>
+    <% ["Individual","Individual-Staff","Minor","Individual Senior Citizen","HUF","Institution","Private Ltd.","Public Ltd","Govt. Organisation","Co-Op Society","Partnership"].each do |ct| %>
+      <label class="form-check-inline">
+        <%= f.radio_button :customer_type, ct %> <%= ct %>
+      </label>
+    <% end %>
+  </div>
+
+  <%# ── APPLICANT DETAILS ── %>
+  <div class="acc-section">
+    <h5>Name of Customer's</h5>
+    <table class="acc-table">
+      <tr><th></th><th>Name</th><th>Date of Birth</th><th>Aadhaar</th><th>Sex</th></tr>
+      <tr>
+        <td><strong>1st Applicant</strong></td>
+        <td><%= f.text_field :app1_name, class: "acc-input", value: @member.name %></td>
+        <td><%= f.date_field :app1_dob, class: "acc-input" %></td>
+        <td><%= f.text_field :app1_aadhaar, class: "acc-input", value: @member.aadhaar_number %></td>
+        <td><%= f.select :app1_sex, ["Male","Female","Other"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>2nd Applicant</strong></td>
+        <td><%= f.text_field :app2_name, class: "acc-input" %></td>
+        <td><%= f.date_field :app2_dob, class: "acc-input" %></td>
+        <td><%= f.text_field :app2_aadhaar, class: "acc-input" %></td>
+        <td><%= f.select :app2_sex, ["Male","Female","Other"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>3rd Applicant</strong></td>
+        <td><%= f.text_field :app3_name, class: "acc-input" %></td>
+        <td><%= f.date_field :app3_dob, class: "acc-input" %></td>
+        <td><%= f.text_field :app3_aadhaar, class: "acc-input" %></td>
+        <td><%= f.select :app3_sex, ["Male","Female","Other"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+    </table>
+
+    <h5 style="margin-top:15px">Father/Husband/Guardian Name</h5>
+    <table class="acc-table">
+      <tr><th></th><th>Name</th><th>Relationship</th></tr>
+      <tr>
+        <td><strong>1st Applicant</strong></td>
+        <td><%= f.text_field :app1_father_husband, class: "acc-input", value: @member.father_or_husband_name %></td>
+        <td><%= f.text_field :app1_relationship, class: "acc-input" %></td>
+      </tr>
+      <tr>
+        <td><strong>2nd Applicant</strong></td>
+        <td><%= f.text_field :app2_father_husband, class: "acc-input" %></td>
+        <td><%= f.text_field :app2_relationship, class: "acc-input" %></td>
+      </tr>
+      <tr>
+        <td><strong>3rd Applicant</strong></td>
+        <td><%= f.text_field :app3_father_husband, class: "acc-input" %></td>
+        <td><%= f.text_field :app3_relationship, class: "acc-input" %></td>
+      </tr>
+    </table>
+  </div>
+
+  <%# ── ADDRESS ── %>
+  <div class="acc-section">
+    <h5>Address For Communication</h5>
+
+    <% [["1st", "app1"], ["2nd", "app2"], ["3rd", "app3"]].each do |label, prefix| %>
+      <strong><%= label %> Applicant</strong>
+      <table class="acc-table" style="margin-bottom:10px">
+        <tr>
+          <th colspan="2">Permanent Address</th>
+          <th colspan="2">Present Address</th>
+        </tr>
+        <tr>
+          <td>D.No/House Name</td>
+          <td><%= f.text_field :"#{prefix}_perm_house", class: "acc-input" %></td>
+          <td>D.No/House Name</td>
+          <td><%= f.text_field :"#{prefix}_pres_house", class: "acc-input" %></td>
+        </tr>
+        <tr>
+          <td>Place, Post & Village</td>
+          <td><%= f.text_field :"#{prefix}_perm_village", class: "acc-input" %></td>
+          <td>Place, Post & Village</td>
+          <td><%= f.text_field :"#{prefix}_pres_village", class: "acc-input" %></td>
+        </tr>
+        <tr>
+          <td>Taluk, District</td>
+          <td><%= f.text_field :"#{prefix}_perm_district", class: "acc-input" %></td>
+          <td>Taluk, District</td>
+          <td><%= f.text_field :"#{prefix}_pres_district", class: "acc-input" %></td>
+        </tr>
+        <tr>
+          <td>PIN</td>
+          <td><%= f.text_field :"#{prefix}_perm_pin", class: "acc-input" %></td>
+          <td>MOBILE</td>
+          <td><%= f.text_field :"#{prefix}_pres_mobile", class: "acc-input" %></td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+
+  <%# ── MODE OF OPERATION ── %>
+  <div class="acc-section">
+    <h5>Mode of Operation</h5>
+    <% ["Self Only","Either OR Survivor","Former OR Survivor","Any one OR Survivor","Jointly","Others"].each do |m| %>
+      <label class="form-check-inline">
+        <%= f.radio_button :mode_of_operation, m %> <%= m %>
+      </label>
+    <% end %>
+  </div>
+
+  <%# ── KYC ── %>
+  <div class="acc-section">
+    <h5>KYC Identification Documents</h5>
+    <table class="acc-table">
+      <tr>
+        <th>LIST 1 - Photo ID</th>
+        <th>LIST 2 - Address Proof</th>
+      </tr>
+      <tr>
+        <td>
+          <%= f.select :kyc_list1,
+            ["Aadhaar","PAN Card","Voter ID Card","Driving License",
+             "Identity card issued by Govt/Public authority","Letter from Employer"],
+            { prompt: "Select Document" }, class: "form-select form-select-sm" %>
+        </td>
+        <td>
+          <%= f.select :kyc_list2,
+            ["Passport","Ration Card","Telephone Bill","Letter from Employer",
+             "Bank account statement with address","Electricity Bill",
+             "Income Tax/Property Tax assessment order/Receipt","Credit Card"],
+            { prompt: "Select Document" }, class: "form-select form-select-sm" %>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <%# ── MINOR ── %>
+  <div class="acc-section">
+    <h5>IF Minor Account Holder</h5>
+    <div class="row">
+      <div class="col-md-4 mb-2">
+        <label>Name of Parent/Guardian</label>
+        <%= f.text_field :minor_guardian_name, class: "form-control form-control-sm" %>
+      </div>
+      <div class="col-md-4 mb-2">
+        <label>Relationship with Minor</label>
+        <%= f.select :minor_guardian_relationship,
+          ["Father","Mother","By Court Order"],
+          { prompt: "Select" }, class: "form-select form-select-sm" %>
+      </div>
+    </div>
+  </div>
+
+  <%# ── CUSTOMER PROFILE ── %>
+  <div class="acc-section">
+    <h5>Customer Profile</h5>
+    <table class="acc-table">
+      <tr>
+        <td style="width:40%"><strong>Marital Status</strong></td>
+        <td><%= f.select :marital_status, ["Married","Unmarried"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>Religion</strong></td>
+        <td><%= f.select :religion, ["Hindu","Muslim","Christian","Sikh"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>Education</strong></td>
+        <td><%= f.select :education, ["School Level","Graduate","Post Graduate","Doctorate","Professional","Others"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>Occupation</strong></td>
+        <td><%= f.select :occupation, ["Salaried","Self Employed","Professional","Agriculturist","Retired","Housewife","Student"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>If Salaried - Organisation & Designation</strong></td>
+        <td><%= f.text_field :organisation_name, class: "form-control form-control-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>If Self Employed - Nature of Business</strong></td>
+        <td><%= f.select :nature_of_business, ["Trading","Manufacturing","Services","Agriculture","Real Estate"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>If Self Employed - Profession</strong></td>
+        <td><%= f.select :profession, ["CA","Doctor","Lawyer","Stock Broker","Consultant","Engineer"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>Annual Household Income</strong></td>
+        <td><%= f.select :annual_income,
+          ["Upto 50,000","50,001-1,00,000","1,00,001-1,50,000","1,50,001-2,00,000",
+           "2,00,001-3,00,000","3,00,001-5,00,000","5,00,001-10,00,000","Above 10,00,000"],
+          { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>Asset Ownership</strong></td>
+        <td><%= f.select :asset_ownership,
+          ["Two Wheeler (Self Owned)","Car (Self Owned)","Car (Company)","Residence (Self)",
+           "Residence (Company Provided)","Residence (Rented)","Residence (Purchase on Loan)"],
+          { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>Preferred Investment</strong></td>
+        <td><%= f.select :preferred_investment,
+          ["Bank Deposit","Mutual Fund","Shares","Company Deposit","Real Estate",
+           "Gold","PPF","Properties","Insurance","Others"],
+          { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>Loans</strong></td>
+        <td><%= f.select :loans_info,
+          ["Car","Housing","Durables","Against Deposit","Business","Gold","Others"],
+          { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+      <tr>
+        <td><strong>Insurance</strong></td>
+        <td><%= f.select :insurance, ["Life","Mediclaim"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="mb-4">
+    <%= f.submit action == :new ? "Create Account" : "Update Account", class: "btn btn-primary" %>
+    &nbsp;
+    <%= link_to "Cancel", member_path(@member), class: "btn btn-secondary" %>
+  </div>
+<% end %>

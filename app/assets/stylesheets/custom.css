@@ -182,3 +182,17 @@ input, button, select, optgroup, textarea {
     background: none !important;
   }
 }
+/* Fix SlimSelect dropdown layout issue */
+.ss-content {
+  position: absolute !important;
+  z-index: 9999 !important;
+}
+.ss-main {
+  position: relative !important;
+}
+
+/* Fix SlimSelect dropdown overlapping layout */
+.ss-content {
+  position: fixed !important;
+  z-index: 99999 !important;
+}

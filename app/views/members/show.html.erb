@@ -31,6 +31,13 @@
 &nbsp;
 <%= link_to 'Create Income Declaration', new_member_income_declaration_path(@member), class: "btn btn-secondary " %>
 &nbsp;
+<% member_account = @member.accounts.last %>
+<% if member_account %>
+  <%= link_to 'Edit Account', edit_member_account_path(@member, member_account), class: 'btn btn-warning' %>
+<% else %>
+  <%= link_to 'Create Account', new_member_account_path(@member), class: 'btn btn-primary' %>
+<% end %>
+&nbsp;
 <%= link_to 'Create Jewel Loan', new_member_jewel_loan_path(@member), class: "btn btn-secondary" %>
 <% end %>
 

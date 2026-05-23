@@ -28,7 +28,7 @@ class AdminController < ApplicationController
     if @branch.save
       redirect_to admin_branches_path, notice: 'Branch created successfully.'
     else
-      render :new_branch
+      render :new_branch, status: :unprocessable_entity
     end
   end
 
@@ -42,7 +42,7 @@ class AdminController < ApplicationController
     if @branch.update(branch_params)
       redirect_to admin_show_branch_path(@branch), notice: 'Branch updated successfully.'
     else
-      render :edit_branch
+      render :edit_branch, status: :unprocessable_entity
     end
   end
 
@@ -140,7 +140,7 @@ class AdminController < ApplicationController
       redirect_to admin_users_path, notice: 'User created successfully.'
     else
       @branches = CooperativeBranch.all
-      render :new_user
+      render :new_user, status: :unprocessable_entity
     end
   end
 
@@ -157,7 +157,7 @@ class AdminController < ApplicationController
     else
       @branches = CooperativeBranch.all
       puts "lllllllllllllllllllllll #{@user.errors.inspect}"
-      render :edit_user
+      render :edit_user, status: :unprocessable_entity
     end
   end
 
@@ -328,7 +328,7 @@ class AdminController < ApplicationController
     if @interest_rate.save
       redirect_to admin_interest_rates_path, notice: 'Interest rate created successfully.'
     else
-      render :new_interest_rate
+      render :new_interest_rate, status: :unprocessable_entity
     end
   end
 
@@ -342,7 +342,7 @@ class AdminController < ApplicationController
     if @interest_rate.update(interest_rate_params)
       redirect_to admin_interest_rates_path, notice: 'Interest rate updated successfully.'
     else
-      render :edit_interest_rate
+      render :edit_interest_rate, status: :unprocessable_entity
     end
   end
 
@@ -374,7 +374,7 @@ class AdminController < ApplicationController
     if @loan_type.save
       redirect_to admin_loan_types_path, notice: 'Loan type created successfully.'
     else
-      render :new_loan_type
+      render :new_loan_type, status: :unprocessable_entity
     end
   end
 
@@ -451,7 +451,58 @@ class AdminController < ApplicationController
     redirect_to admin_loan_purposes_path, notice: "Loan purpose #{status} successfully."
   end
 
+
+  # ── TERM DEPOSIT TYPES ──
+  def term_deposit_types
+    @term_deposit_types = TermDepositType.order(:name)
+  end
+
+  def new_term_deposit_type
+    @term_deposit_type = TermDepositType.new
+  end
+
+  def create_term_deposit_type
+    @term_deposit_type = TermDepositType.new(term_deposit_type_params)
+    @term_deposit_type.active = true
+    if @term_deposit_type.save
+      redirect_to admin_term_deposit_types_path, notice: "Term deposit type created successfully."
+    else
+      render :new_term_deposit_type
+    end
+  end
+
+  def edit_term_deposit_type
+    @term_deposit_type = TermDepositType.find(params[:id])
+  end
+
+  def update_term_deposit_type
+    @term_deposit_type = TermDepositType.find(params[:id])
+    if @term_deposit_type.update(term_deposit_type_params)
+      redirect_to admin_term_deposit_types_path, notice: "Term deposit type updated successfully."
+    else
+      render :edit_term_deposit_type
+    end
+  end
+
+  def destroy_term_deposit_type
+    TermDepositType.find(params[:id]).destroy
+    redirect_to admin_term_deposit_types_path, notice: "Deleted successfully."
+  end
+
+  def toggle_term_deposit_type
+    t = TermDepositType.find(params[:id])
+    t.update(active: !t.active)
+    redirect_to admin_term_deposit_types_path
+  end
+
+
+  def term_deposit_type_params
+    params.require(:term_deposit_type).permit(:name, :description, :active)
+  end
+end
+
   private
+
 
   def ensure_super_admin
     unless current_user.super_admin? || current_user.section_head?
@@ -486,4 +537,3 @@ class AdminController < ApplicationController
   def loan_purpose_params
     params.require(:loan_purpose).permit(:name, :description, :active)
   end
-end

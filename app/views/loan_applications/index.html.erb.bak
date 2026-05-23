@@ -1,0 +1,126 @@
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <h5 class="mb-0">Loan Applications</h5>
+</div>
+<br />
+<%= search_form_for @q do |f| %>
+ <table class='table table-bordered search-table' >
+   <tr>
+      <th> <label> Applicant Name Contains: </label>
+       <%= f.search_field :member_name_cont %> </th>
+      <th> <label> Mobile Number Contains: </label>  
+       <%= f.search_field :member_mobile_number_cont %> </th>
+      <th> <label> Aadhar Contains: </label> 
+       <%= f.search_field :member_aadhaar_number_cont %> </th>
+       <th> <label> R No: </label>
+       <%= f.search_field :r_no_eq %> </th>
+      <th rowspan="2">  <%= f.submit "Search", class: 'btn btn-secondary btn-sm' %> </th>
+   </tr>
+ </table>
+<% end %>
+
+<table class="table loan-table table-bordered list-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Applicant Name</th>
+      <th>R No</th>
+      <th>Requested Amount</th>
+      <th>Term</th>
+      <th>Rate of Interest</th>
+      <th>Created At</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @loan_applications.each_with_index do |loan, index| %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= loan.member.name %></td>
+        <td><%= loan.r_no %></td>
+        <td>&#8377; <%= loan.loan_amount %></td>
+        <td><%= loan.loan_term %></td>
+        <td><%= loan.int_rate %>%</td>
+        <td><%= loan.cooperative_branch.try(:name) %></td>
+        <td>
+          <%= link_to "Print", member_loan_application_path(loan.member, loan, format: :pdf), class: "btn btn-info btn-sm" %>
+          <%= loan_edit_button(loan, edit_member_loan_application_path(loan.member, loan), btn_class: "btn btn-warning btn-sm") %>
+          <%= link_to "Show", member_loan_application_path(loan.member, loan), class: 'btn btn-sm btn-secondary' %>
+          <%= link_to "Member", loan.member, class: "btn btn-secondary btn-sm" %>
+          <button type="button" class="btn btn-primary btn-sm"
+                  onclick="openGuarantor('<%= loan.member.id %>', '<%= loan.id %>', '<%= loan.guarantor_undertakings.first&.id %>', '<%= loan.guarantor_undertakings.first&.guarantor_id %>')">
+            Change Guarantor
+          </button>
+        </td>
+      </tr>
+    <% end %>
+    <% if @loan_applications.empty? %>
+      <tr>
+        <td colspan="8" class="text-center">No loan applications found</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="modal fade" id="changeGuarantorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Guarantor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">Select Guarantor</label>
+        <select id="change-guarantor-select" class="form-select">
+          <option value="">-- Select Guarantor --</option>
+          <% Member.all.each do |m| %>
+            <option value="<%= m.id %>"><%= m.name %> (S/o <%= m.father_or_husband_name %>)</option>
+          <% end %>
+        </select>
+        <input type="hidden" id="change-member-id" value="">
+        <input type="hidden" id="change-loan-id" value="">
+        <input type="hidden" id="change-undertaking-id" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" onclick="saveGuarantor()">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openGuarantor(memberId, loanId, undertakingId, guarantorId) {
+    document.getElementById('change-member-id').value = memberId;
+    document.getElementById('change-loan-id').value = loanId;
+    document.getElementById('change-undertaking-id').value = undertakingId || '';
+    var select = document.getElementById('change-guarantor-select');
+    select.value = (guarantorId && guarantorId !== 'null') ? guarantorId : '';
+    var modal = new window.bootstrap.Modal(document.getElementById('changeGuarantorModal'));
+    modal.show();
+  }
+
+  function saveGuarantor() {
+    var guarantorId = document.getElementById('change-guarantor-select').value;
+    var memberId = document.getElementById('change-member-id').value;
+    var loanId = document.getElementById('change-loan-id').value;
+    var undertakingId = document.getElementById('change-undertaking-id').value;
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    if (!guarantorId) { alert('Please select a guarantor.'); return; }
+    var url = (undertakingId && undertakingId !== '')
+      ? '/members/' + memberId + '/loan_applications/' + loanId + '/guarantor_undertakings/' + undertakingId
+      : '/members/' + memberId + '/loan_applications/' + loanId + '/guarantor_undertakings';
+    var method = (undertakingId && undertakingId !== '') ? 'PATCH' : 'POST';
+    fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body: JSON.stringify({ guarantor_undertaking: { guarantor_id: guarantorId } })
+    }).then(function(res) {
+      if (res.ok || res.redirected) {
+        window.bootstrap.Modal.getInstance(document.getElementById('changeGuarantorModal')).hide();
+        window.location.reload();
+      } else {
+        res.text().then(function(t) { alert('Error: ' + t); });
+      }
+    }).catch(function(err) { alert('Error: ' + err); });
+  }
+</script>

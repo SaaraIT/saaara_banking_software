@@ -1,0 +1,41 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  member: one
+  account_number: MyString
+  account_type: MyString
+  date: 2026-05-20
+  initial_deposit: 9.99
+  customer_type: MyString
+  mode_of_operation: MyString
+  marital_status: MyString
+  religion: MyString
+  education: MyString
+  occupation: MyString
+  organisation_name: MyString
+  nature_of_business: MyString
+  annual_income: MyString
+  asset_ownership: MyString
+  preferred_investment: MyString
+  loans_info: MyString
+  insurance: MyString
+
+two:
+  member: two
+  account_number: MyString
+  account_type: MyString
+  date: 2026-05-20
+  initial_deposit: 9.99
+  customer_type: MyString
+  mode_of_operation: MyString
+  marital_status: MyString
+  religion: MyString
+  education: MyString
+  occupation: MyString
+  organisation_name: MyString
+  nature_of_business: MyString
+  annual_income: MyString
+  asset_ownership: MyString
+  preferred_investment: MyString
+  loans_info: MyString
+  insurance: MyString

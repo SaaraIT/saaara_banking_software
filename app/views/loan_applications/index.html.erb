@@ -3,7 +3,6 @@
 </div>
 <br />
 <%= search_form_for @q do |f| %>
-
  <table class='table table-bordered search-table' >
    <tr>
       <th> <label> Applicant Name Contains: </label>
@@ -16,7 +15,7 @@
        <%= f.search_field :r_no_eq %> </th>
       <th rowspan="2">  <%= f.submit "Search", class: 'btn btn-secondary btn-sm' %> </th>
    </tr>
- 
+ </table>
 <% end %>
 
 <table class="table loan-table table-bordered list-table">
@@ -38,7 +37,7 @@
         <td><%= index + 1 %></td>
         <td><%= loan.member.name %></td>
         <td><%= loan.r_no %></td>
-        <td>₹ <%= loan.loan_amount %></td>
+        <td>&#8377; <%= loan.loan_amount %></td>
         <td><%= loan.loan_term %></td>
         <td><%= loan.int_rate %>%</td>
         <td><%= loan.cooperative_branch.try(:name) %></td>
@@ -46,11 +45,14 @@
           <%= link_to "Print", member_loan_application_path(loan.member, loan, format: :pdf), class: "btn btn-info btn-sm" %>
           <%= loan_edit_button(loan, edit_member_loan_application_path(loan.member, loan), btn_class: "btn btn-warning btn-sm") %>
           <%= link_to "Show", member_loan_application_path(loan.member, loan), class: 'btn btn-sm btn-secondary' %>
-          <%= link_to "Member", loan.member, class: "btn btn-secondary  btn-sm" %></td>
+          <%= link_to "Member", loan.member, class: "btn btn-secondary btn-sm" %>
+          <button type="button" class="btn btn-primary btn-sm"
+                  onclick="openGuarantor('<%= loan.member.id %>', '<%= loan.id %>', '<%= loan.guarantor_undertakings.map(&:guarantor_id).join(',') %>', '<%= loan.guarantor_undertakings.map(&:id).join(',') %>')">
+            Change Guarantor
+          </button>
         </td>
       </tr>
     <% end %>
-
     <% if @loan_applications.empty? %>
       <tr>
         <td colspan="8" class="text-center">No loan applications found</td>
@@ -58,3 +60,144 @@
     <% end %>
   </tbody>
 </table>
+
+<style>
+#changeGuarantorModal .ss-main {
+  min-height: 38px !important;
+  height: auto !important;
+}
+#changeGuarantorModal .ss-multi-selected {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  padding: 4px !important;
+  min-height: 38px !important;
+  height: auto !important;
+  background: white !important;
+}
+#changeGuarantorModal .ss-multi-selected .ss-value {
+  display: inline-flex !important;
+  align-items: center !important;
+  background: #0d6efd !important;
+  color: white !important;
+  border-radius: 4px !important;
+  padding: 2px 8px !important;
+  font-size: 13px !important;
+  height: 26px !important;
+  width: auto !important;
+}
+#changeGuarantorModal .ss-content {
+  z-index: 9999 !important;
+}
+</style>
+
+<div class="modal fade" id="changeGuarantorModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Change Guarantors</h5>
+        <button type="button" class="btn-close" onclick="closeGuarantorModal()"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">Select Guarantors (up to 5)</label>
+        <select id="change-guarantor-select" class="form-select" multiple>
+          <% Member.all.each do |m| %>
+            <option value="<%= m.id %>"><%= m.name %> (S/o <%= m.father_or_husband_name %>)</option>
+          <% end %>
+        </select>
+        <small class="text-muted">Search and select guarantors. <strong>Selected: <span id="change-selected-count">0</span>/5</strong></small>
+        <input type="hidden" id="change-member-id" value="">
+        <input type="hidden" id="change-loan-id" value="">
+        <input type="hidden" id="change-existing-undertaking-ids" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeGuarantorModal()">Cancel</button>
+        <button type="button" class="btn btn-success" onclick="saveGuarantors()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var slimGuarantor = null;
+
+  window.openGuarantor = function(memberId, loanId, existingGuarantorIds, existingUndertakingIds) {
+    document.getElementById('change-member-id').value = memberId;
+    document.getElementById('change-loan-id').value = loanId;
+    document.getElementById('change-existing-undertaking-ids').value = existingUndertakingIds;
+
+    var guarantorIds = existingGuarantorIds ? existingGuarantorIds.split(',').filter(Boolean) : [];
+
+    // Show modal manually
+    var modalEl = document.getElementById('changeGuarantorModal');
+    modalEl.style.display = 'block';
+    modalEl.classList.add('show');
+    document.body.classList.add('modal-open');
+    var oldBackdrop = document.getElementById('guarantor-backdrop');
+    if (oldBackdrop) oldBackdrop.remove();
+    var backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop fade show';
+    backdrop.id = 'guarantor-backdrop';
+    document.body.appendChild(backdrop);
+
+    // Pre-select existing guarantors
+    var select = document.getElementById('change-guarantor-select');
+    Array.from(select.options).forEach(function(opt) {
+      opt.selected = guarantorIds.includes(opt.value);
+    });
+
+    // Init SlimSelect
+    if (slimGuarantor) { try { slimGuarantor.destroy(); } catch(e) {} slimGuarantor = null; }
+    slimGuarantor = new SlimSelect({
+      select: '#change-guarantor-select',
+      settings: {
+        placeholder: 'Search and select guarantors...',
+        closeOnSelect: false,
+        allowDeselect: true,
+        maxSelected: 5
+      },
+      events: {
+        afterChange: function(s) {
+          document.getElementById('change-selected-count').innerText = s.length;
+        }
+      }
+    });
+
+    if (guarantorIds.length > 0) { slimGuarantor.setSelected(guarantorIds); }
+    document.getElementById('change-selected-count').innerText = guarantorIds.filter(Boolean).length;
+  };
+
+  window.closeGuarantorModal = function() {
+    var modalEl = document.getElementById('changeGuarantorModal');
+    modalEl.style.display = 'none';
+    modalEl.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    var backdrop = document.getElementById('guarantor-backdrop');
+    if (backdrop) backdrop.remove();
+    if (slimGuarantor) { try { slimGuarantor.destroy(); } catch(e) {} slimGuarantor = null; }
+  };
+
+  window.saveGuarantors = function() {
+    var selectedIds = slimGuarantor ? slimGuarantor.getSelected() : [];
+    var memberId = document.getElementById('change-member-id').value;
+    var loanId = document.getElementById('change-loan-id').value;
+    var existingIds = document.getElementById('change-existing-undertaking-ids').value;
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    if (selectedIds.length === 0) { alert('Please select at least one guarantor.'); return; }
+
+    // Single call - update_co_obligants handles everything
+    fetch('/members/' + memberId + '/loan_applications/' + loanId + '/update_co_obligants', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body: JSON.stringify({ guarantor_ids: selectedIds })
+    }).then(function(res) {
+      if (res.ok) {
+        closeGuarantorModal();
+        window.location.href = '/members/' + memberId + '/loan_applications/' + loanId + '/edit';
+      } else {
+        res.text().then(function(t) { alert('Error: ' + t); });
+      }
+    }).catch(function(err) { alert('Error: ' + err); });
+  };
+</script>

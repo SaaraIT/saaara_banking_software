@@ -2,7 +2,8 @@ class SelfHelpGroupsController < ApplicationController
   before_action :set_self_help_group, only: %i[show edit update destroy]
 
   def index
-    @self_help_groups = SelfHelpGroup.includes(:shg_members).all
+    @self_help_groups = SelfHelpGroup.includes(:shg_members)
+    @self_help_groups = @self_help_groups.where("LOWER(name) LIKE ?", "%#{params[:q].to_s.strip.downcase}%") if params[:q].present?
   end
 
   def show; end

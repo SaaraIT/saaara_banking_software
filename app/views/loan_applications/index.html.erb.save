@@ -1,0 +1,62 @@
+   
+=begin
+ 
+ <div class="d-flex justify-content-between align-items-center mt-3">
+  <h5 class="mb-0">Loan Applications</h5>
+</div>
+<br />
+<%= search_form_for @q do |f| %>
+
+ <table class='table table-bordered search-table' >
+   <tr>
+      <th> <label> Applicant Name Contains: </label>
+       <%= f.search_field :member_name_cont %> </th>
+      <th> <label> Mobile Number Contains: </label>  
+       <%= f.search_field :member_mobile_number_cont %> </th>
+      <th> <label> Aadhar Contains: </label> 
+       <%= f.search_field :member_aadhaar_number_cont %> </th>
+       <th> <label> R No: </label>
+       <%= f.search_field :r_no_eq %> </th>
+      <th rowspan="2">  <%= f.submit "Search", class: 'btn btn-secondary btn-sm' %> </th>
+   </tr>
+ 
+<% end %>
+
+<table class="table loan-table table-bordered list-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Applicant Name</th>
+      <th>R No</th>
+      <th>Requested Amount</th>
+      <th>Term</th>
+      <th>Rate of Interest</th>
+      <th>Created At</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @loan_applications.each_with_index do |loan, index| %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= loan.member.name %></td>
+        <td><%= loan.r_no %></td>
+        <td>₹ <%= loan.loan_amount %></td>
+        <td><%= loan.loan_term %></td>
+        <td><%= loan.int_rate %>%</td>
+        <td><%= loan.cooperative_branch.try(:name) %></td>
+        <td>
+          <%= link_to "Print", member_loan_application_path(loan.member, loan, format: :pdf), class: "btn btn-info btn-sm" %>
+          <%= loan_edit_button(loan, edit_member_loan_application_path(loan.member, loan), btn_class: "btn btn-warning btn-sm") %>
+          <%= link_to "Show", member_loan_application_path(loan.member, loan), class: 'btn btn-sm btn-secondary' %>
+          <%= link_to "Member", loan.member, class: "btn btn-secondary  btn-sm" %></td>
+        </td>
+      </tr>
+    <% end %>
+
+    <% if @loan_applications.empty? %>
+      <tr>
+        <td colspan="8" class="text-center">No loan applications found</td>
+      </tr>
+    <% end %>
+  </tbody

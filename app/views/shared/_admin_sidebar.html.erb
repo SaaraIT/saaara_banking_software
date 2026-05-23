@@ -33,6 +33,12 @@
         </li>
 
         <li class="nav-item">
+          <a class="nav-link <%= 'active' if request.path.match?(/^\/admin\/term_deposit_types/) %>" href="<%= admin_term_deposit_types_path %>">
+            <i class="nav-icon"></i>
+            Term Deposit Types
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link <%= 'active' if request.path.match?(/^\/admin\/loan_types/) %>" href="<%= admin_loan_types_path %>">
             <span data-feather="tag" class="me-2"></span>
             Loan Types

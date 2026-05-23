@@ -1,0 +1,15 @@
+[0;1;32m●[0m saara.service - Saara Banking Puma
+     Loaded: loaded (]8;;file://ubuntu-s-2vcpu-4gb-blr1-01/etc/systemd/system/saara.service/etc/systemd/system/saara.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Tue 2026-05-19 04:14:33 UTC; 9s ago
+   Main PID: 2267957 (ruby)
+      Tasks: 2 (limit: 4653)
+     Memory: 76.1M (peak: 76.4M)
+        CPU: 2.378s
+     CGroup: /system.slice/saara.service
+             └─[0;38;5;245m2267957 "puma 6.6.0 (tcp://0.0.0.0:3003) [saara-banking-website]"[0m
+
+May 19 04:14:28 ubuntu-s-2vcpu-4gb-blr1-01 systemd[1]: [0;1;39m[0;1;31m[0;1;39msaara.service: Main process exited, code=exited, status=1/FAILURE[0m
+May 19 04:14:28 ubuntu-s-2vcpu-4gb-blr1-01 systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185msaara.service: Failed with result 'exit-code'.[0m
+May 19 04:14:28 ubuntu-s-2vcpu-4gb-blr1-01 systemd[1]: saara.service: Consumed 2.644s CPU time.
+May 19 04:14:33 ubuntu-s-2vcpu-4gb-blr1-01 systemd[1]: saara.service: Scheduled restart job, restart counter is at 5.
+May 19 04:14:33 ubuntu-s-2vcpu-4gb-blr1-01 systemd[1]: Started saara.service - Saara Banking Puma.
