@@ -5,10 +5,10 @@ class MembersController < ApplicationController
   
   before_action :authorize_edit, only: [:edit, :update]
 
-  def index
-    @q = Current.user.head_office_user? ? Member.ransack(params[:q]) : Current.branch.members.ransack(params[:q])
-    @members = @q.result(distinct: true)
-  end
+def index
+  @q = Member.ransack(params[:q])
+  @members = @q.result(distinct: true).includes(:memberships).page(params[:page]).per(50)
+end
 
   def new
     @member = Current.branch.members.new
@@ -36,7 +36,6 @@ class MembersController < ApplicationController
     if @member.update(member_params)
       redirect_to @member, notice: 'Member was successfully updated.'
     else
-     puts "pppppppppppppppppppppppppppppp #{@member.errors.inspect}"
       render :edit
     end
   end
@@ -168,11 +167,9 @@ class MembersController < ApplicationController
     )
   end
 
-  def search_all
-    members = Member.order(:name).map do |m|
-      { id: m.id, name: m.name, father_or_husband_name: m.father_or_husband_name }
-    end
-    render json: members
-  end
+def search_all
+  members = Member.order(:name).limit(500).pluck(:id, :name, :father_or_husband_name)
+  render json: members.map { |id, name, foh| { id: id, name: name, father_or_husband_name: foh } }
+end
 end
  

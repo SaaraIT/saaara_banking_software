@@ -218,7 +218,7 @@
           <%= label_tag "loan_application_guarantor_ids", "Guarantors" %>
           <%= select_tag "loan_application[guarantor_ids][]",
             options_for_select(
-              Member.where.not(id: @member.id).map { |m| ["#{m.name} (S/o #{m.father_or_husband_name})", m.id] }
+              Member.where.not(id: @member.id).map { |m| ["#{m.name} (C/o #{m.father_or_husband_name})", m.id] }
             ),
             multiple: true,
             class: "form-select slim-select",

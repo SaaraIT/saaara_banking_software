@@ -62,10 +62,11 @@ class ShgAccountsController < ApplicationController
       :branch, :date, :account_number, :gender_code,
       :shg_name, :date_of_formation, :number_of_members, :shg_address,
       :president_name, :president_age, :president_designation,
-      :president_address, :president_mobile, :president_kyc,
+      :president_address, :president_mobile, :president_kyc_other,
       :secretary_name, :secretary_age, :secretary_designation,
-      :secretary_address, :secretary_mobile, :secretary_kyc,
-      :officer_name, :account_opened_on
+      :secretary_address, :secretary_mobile, :secretary_kyc_other,
+      :officer_name, :account_opened_on,
+      president_kyc: [], secretary_kyc: []
     )
   end
 end

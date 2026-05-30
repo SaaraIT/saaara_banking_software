@@ -108,12 +108,12 @@ end
       :app2_pres_house, :app2_pres_village, :app2_pres_district, :app2_pres_mobile,
       :app3_perm_house, :app3_perm_village, :app3_perm_district, :app3_perm_pin,
       :app3_pres_house, :app3_pres_village, :app3_pres_district, :app3_pres_mobile,
-      :mode_of_operation, :kyc_list1, :kyc_list2,
+      :mode_of_operation,
       :minor_guardian_name, :minor_guardian_relationship,
       :marital_status, :religion, :education, :occupation,
       :organisation_name, :nature_of_business, :profession,
       :annual_income, :asset_ownership, :preferred_investment, :loans_info, :insurance,
-      :nominee_name, :nominee_address, :nominee_same_address, :nominee_relationship, :nominee_mobile
+      :nominee_name, :nominee_address, :nominee_same_address, :nominee_relationship, :nominee_mobile, :minimum_balance, :kyc_list1_other, :kyc_list2_other, :caste, :nationality, :aadhaar_no, :pan_no, :phone_no, kyc_list1: [], kyc_list2: []
     )
   end
 end

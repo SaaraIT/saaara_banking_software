@@ -57,7 +57,7 @@
        Mathrubhoomi Souharda Sahakari Sangha Ltd.</p>
     <p class="bold italic underline">Subject: Letter of undertaking to repay the Loan amount</p>
     <p><span class="italic">Dear Sir,</span></p>
-    <p>Mr / Mrs / Ms <span class="underline" style="width: 300px;" id="guarantor_name">&nbsp;</span> <%= @member.father_or_husband == "Husband" ? "W/O" : "S/O" %> <span class="underline" style="width: 300px;" id="guarantor_father">&nbsp;</span> Aged about <span class="underline" style="width: 50px;" id="guarantor_age">&nbsp;</span>
+    <p>Mr / Mrs / Ms <span class="underline" style="width: 300px;" id="guarantor_name">&nbsp;</span> <%= "C/O" %> <span class="underline" style="width: 300px;" id="guarantor_father">&nbsp;</span> Aged about <span class="underline" style="width: 50px;" id="guarantor_age">&nbsp;</span>
        Residing at <span class="underline" style="width: 400px;" id="guarantor_address">&nbsp;</span> is working with M/S <span class="underline" style="width: 200px;" id="guarantor_employer">&nbsp;</span>
        As <span class="underline" style="width:200px;" id="guarantor_profession">&nbsp;</span> Since/from <span class="underline" style="width: 100px;" id="guarantor_experience">&nbsp;</span></p>
     <p><span class="bold">Here with I</span> offer myself as the guarantor to the borrower</p>
@@ -74,7 +74,7 @@
  
     <hr />
     <div class="form-group">
-      <%= form.submit "Submit", class: "btn btn-primary" %>
+      <%= form.submit "Submit", class: "btn btn-primary", data: { disable_with: "Submitting..." } %>
     </div>
     <br />
 <% end %>

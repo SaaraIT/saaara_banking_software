@@ -102,7 +102,7 @@
         <label class="form-label">Select Guarantors (up to 5)</label>
         <select id="change-guarantor-select" class="form-select" multiple>
           <% Member.all.each do |m| %>
-            <option value="<%= m.id %>"><%= m.name %> (S/o <%= m.father_or_husband_name %>)</option>
+            <option value="<%= m.id %>"><%= m.name %> (C/o <%= m.father_or_husband_name %>)</option>
           <% end %>
         </select>
         <small class="text-muted">Search and select guarantors. <strong>Selected: <span id="change-selected-count">0</span>/5</strong></small>

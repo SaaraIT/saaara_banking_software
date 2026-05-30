@@ -24,7 +24,6 @@ class User < ApplicationRecord
   end
 
   def super_admin?
-     puts "ppppppppppppppppppppppp #{role}"
     role == "super_admin"
   end
 

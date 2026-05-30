@@ -1,5 +1,5 @@
 <style>
-  @font-face { font-family: "Baloo"; src: url("https://fonts.gstatic.com/s/balootamma2/v2/vEFK2_hCAgcR46PaajtrYlBbd7wf8tK1W77HtMo.ttf") format("truetype"); }
+  @font-face { font-family: "Baloo"; src: url('https://fonts.gstatic.com/s/balootamma2/v2/vEFK2_hCAgcR46PaajtrYlBbd7wf8tK1W77HtMo.ttf') format('truetype'); }
   body { font-family: "Baloo", Arial, sans-serif; font-size: 14px; }
   .header-table { width: 100%; border: 0; margin-bottom: 10px; }
   .header-text h1 { font-size: 24px; font-weight: bold; margin: 0; color: #b30000; }
@@ -73,12 +73,20 @@
     <td><strong>KYC Documents Provided</strong></td>
     <td style="font-size:13px;">
       <strong>Enclosed copy of address &amp; ID Proof</strong><br/>
-      ☐ Adhar Card &nbsp; ☐ Pancard &nbsp; ☐ Voter ID &nbsp; ☐ DL<br/>
+      <% pkyc = @shg_account.president_kyc.is_a?(String) ? (JSON.parse(@shg_account.president_kyc) rescue []) : Array(@shg_account.president_kyc) %>
+      <%= pkyc.include?('Adhar Card') ? '☑' : '☐' %> Adhar Card &nbsp;
+      <%= pkyc.include?('Pancard') ? '☑' : '☐' %> Pancard &nbsp;
+      <%= pkyc.include?('Voter ID') ? '☑' : '☐' %> Voter ID &nbsp;
+      <%= pkyc.include?('DL') ? '☑' : '☐' %> DL<br/>
       Any Other documents accepted by Sahakari(Specify)....................
     </td>
     <td style="font-size:13px;">
       <strong>Enclosed copy of address &amp; ID Proof</strong><br/>
-      ☐ Adhar Card &nbsp; ☐ Pancard &nbsp; ☐ Voter ID &nbsp; ☐ DL<br/>
+      <% skyc = @shg_account.secretary_kyc.is_a?(String) ? (JSON.parse(@shg_account.secretary_kyc) rescue []) : Array(@shg_account.secretary_kyc) %>
+      <%= skyc.include?('Adhar Card') ? '☑' : '☐' %> Adhar Card &nbsp;
+      <%= skyc.include?('Pancard') ? '☑' : '☐' %> Pancard &nbsp;
+      <%= skyc.include?('Voter ID') ? '☑' : '☐' %> Voter ID &nbsp;
+      <%= skyc.include?('DL') ? '☑' : '☐' %> DL<br/>
       Any Other documents accepted by Sahakari(Specify)....................
     </td>
   </tr>
@@ -136,8 +144,8 @@
   <tr><td><strong>Address</strong></td><td style="height:50px;"><%= @shg_account.shg_address %></td></tr>
 </table>
 
-<div class="section-title">Resolution For Opening Members SHG Savings Account <span style="color:red;">(MANUAL OPTION)</span></div>
-<p style="text-align:justify;">Today on ………………(Date) at the meeting of ………………………(Name Of Shg) at ………………………………(Meeting Place Of Shg/address) in presence of all its members, it is resolved that our ………………………( Name Of Shg) will open a Savings Account in Mathrubhoomi Souharda Sahakari Sangha ………………Branch. It has also been further resolved that Shri/Smt ………………………(Designation ………………………) and Shri/Smt ………………………(Designation ………………………) will sign all the necessary documents related to the opening Savings account representatives on behalf of ………………………(Name Of Shg) Transaction in the Savings account of the group will be done by Joint Signature Of any two among the above mentioned representatives.</p>
+<div class="section-title">Resolution For Opening Members SHG Savings Account </div>
+<p style="text-align:justify;">Today on _______________________(Date) at the meeting of _______________________(Name Of Shg) at _______________________(Meeting Place Of Shg/address) in presence of all its members, it is resolved that our _______________________(Name Of Shg) will open a Savings Account in Mathrubhoomi Souharda Sahakari Sangha _______________________Branch. It has also been further resolved that Shri/Smt _______________________(Designation_______________________) and Shri/Smt_______________________(Designation_______________________) will sign all the necessary documents related to the opening Savings account representatives on behalf of _______________________(Name Of Shg) Transaction in the Savings account of the group will be done by Joint Signature Of any two among the above mentioned representatives.</p>
 <p>The above resolution for <strong>Opening</strong> Member SHG <strong>Savings Account</strong> is agreed and signed by all SHG members (Seperate Sheet Enclosed)</p>
 
 <table class="no-border">
@@ -154,7 +162,7 @@
 </table>
 
 <div class="section-title">Resolution for Opening Savings account and agreed by SHG members</div>
-<p>We all the members Of ………………………………SHG agree to the above decision</p>
+<p>We all the members Of ………_______________________SHG agree to the above decision</p>
 <table style="font-size:12px;">
   <thead>
     <tr>
@@ -169,7 +177,7 @@
   </thead>
   <tbody>
     <% @shg.shg_members.each_with_index do |member, i| %>
-      <tr style="height:32px;">
+      <tr style="height:70px;">
         <td style="text-align:center;"><%= i + 1 %></td>
         <td><%= member.name %></td>
         <td><%= member.mobile %></td>
@@ -177,13 +185,6 @@
         <td><%= member.full_address %></td>
         <td></td>
         <td></td>
-      </tr>
-    <% end %>
-    <% remaining = [20 - @shg.shg_members.count, 0].max %>
-    <% (@shg.shg_members.count + 1..@shg.shg_members.count + remaining).each do |n| %>
-      <tr style="height:32px;">
-        <td style="text-align:center;"><%= n %></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
     <% end %>
   </tbody>

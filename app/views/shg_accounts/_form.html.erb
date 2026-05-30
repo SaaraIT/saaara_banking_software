@@ -133,22 +133,22 @@
     <td style="font-size:13px;">
       <div><strong>Enclosed copy of address &amp; ID Proof</strong></div>
       <div style="margin:5px 0;">
-        <label style="margin-right:10px;"><input type="checkbox" > Adhar Card</label>
-        <label style="margin-right:10px;"><input type="checkbox" > Pancard</label>
-        <label style="margin-right:10px;"><input type="checkbox" > Voter ID</label>
-        <label style="margin-right:10px;"><input type="checkbox" > DL</label>
+        <% pkyc = @shg_account.president_kyc.is_a?(String) ? (JSON.parse(@shg_account.president_kyc) rescue []) : Array(@shg_account.president_kyc) %>
+        <label style="margin-right:10px;"><input type="checkbox" name="shg_account[president_kyc][]" value="Adhar Card" <%= 'checked' if pkyc.include?('Adhar Card') %>> Adhar Card</label>
+        <label style="margin-right:10px;"><input type="checkbox" name="shg_account[president_kyc][]" value="Pancard" <%= 'checked' if pkyc.include?('Pancard') %>> Pancard</label>
+        <label style="margin-right:10px;"><input type="checkbox" name="shg_account[president_kyc][]" value="Voter ID" <%= 'checked' if pkyc.include?('Voter ID') %>> Voter ID</label>
+        <label style="margin-right:10px;"><input type="checkbox" name="shg_account[president_kyc][]" value="DL" <%= 'checked' if pkyc.include?('DL') %>> DL</label>
       </div>
-      <div style="margin-top:5px;">Any Other documents accepted by Sahakari(Specify)..........................</div>
     </td>
     <td style="font-size:13px;">
       <div><strong>Enclosed copy of address &amp; ID Proof</strong></div>
       <div style="margin:5px 0;">
-        <label style="margin-right:10px;"><input type="checkbox" > Adhar Card</label>
-        <label style="margin-right:10px;"><input type="checkbox" > Pancard</label>
-        <label style="margin-right:10px;"><input type="checkbox" > Voter ID</label>
-        <label style="margin-right:10px;"><input type="checkbox" > DL</label>
+        <% skyc = @shg_account.secretary_kyc.is_a?(String) ? (JSON.parse(@shg_account.secretary_kyc) rescue []) : Array(@shg_account.secretary_kyc) %>
+        <label style="margin-right:10px;"><input type="checkbox" name="shg_account[secretary_kyc][]" value="Adhar Card" <%= 'checked' if skyc.include?('Adhar Card') %>> Adhar Card</label>
+        <label style="margin-right:10px;"><input type="checkbox" name="shg_account[secretary_kyc][]" value="Pancard" <%= 'checked' if skyc.include?('Pancard') %>> Pancard</label>
+        <label style="margin-right:10px;"><input type="checkbox" name="shg_account[secretary_kyc][]" value="Voter ID" <%= 'checked' if skyc.include?('Voter ID') %>> Voter ID</label>
+        <label style="margin-right:10px;"><input type="checkbox" name="shg_account[secretary_kyc][]" value="DL" <%= 'checked' if skyc.include?('DL') %>> DL</label>
       </div>
-      <div style="margin-top:5px;">Any Other documents accepted by Sahakari(Specify)..........................</div>
     </td>
   </tr>
   <tr>
@@ -221,9 +221,8 @@
   </table>
 </div>
 
-<%# RESOLUTION MANUAL OPTION %>
 <div class="acc-section">
-  <h5>Resolution For Opening Members SHG Savings Account <span style="color:red;">(MANUAL OPTION)</span></h5>
+  <h5>Resolution For Opening Members SHG Savings Account </h5>
   <p style="font-size:13px; text-align:justify; margin-bottom:15px;">
     Today on ………………(Date) at the meeting of ………………………(Name Of Shg) at ………………………………(Meeting Place Of Shg/address) in presence of all its members, it is resolved that our ………………………( Name Of Shg) will open a Savings Account in Mathrubhoomi Souharda Sahakari Sangha ………………Branch. It has also been further resolved that Shri/Smt ………………………(Designation ………………………) and Shri/Smt ………………………(Designation ………………………) will sign all the necessary documents related to the opening Savings account representatives on behalf of ………………………(Name Of Shg) Transaction in the Savings account of the group will be done by Joint Signature Of any two among the above mentioned representatives.
   </p>
@@ -260,7 +259,7 @@
     </thead>
     <tbody>
       <% @shg.shg_members.each_with_index do |member, i| %>
-        <tr style="height:35px;">
+        <tr style="height:70px;">
           <td style="text-align:center;"><%= i + 1 %></td>
           <td><%= member.name %></td>
           <td><%= member.mobile %></td>
@@ -270,13 +269,7 @@
           <td></td>
         </tr>
       <% end %>
-      <% remaining = [20 - @shg.shg_members.count, 0].max %>
-      <% (@shg.shg_members.count + 1..@shg.shg_members.count + remaining).each do |n| %>
-        <tr style="height:35px;">
-          <td style="text-align:center;"><%= n %></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-      <% end %>
+
     </tbody>
   </table>
 </div>

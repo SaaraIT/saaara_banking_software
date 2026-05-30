@@ -231,7 +231,7 @@
 
             <div class="input-field">
                 <label>Date:</label>
-               <%= form.date_field :application_date, value: Date.today, disabled: member_fields_disabled %>
+               <%= form.date_field :application_date, disabled: member_fields_disabled %>
             </div>
 
             <!-- Right-aligned text -->
@@ -774,7 +774,7 @@
       <table>
         <tr>
           <td>Date:</td>
-          <td><%= form.date_field :declaration_date, value: Date.today, disabled: member_fields_disabled %></td>
+          <td><%= form.date_field :declaration_date, disabled: member_fields_disabled %></td>
           <td class="signature-label">Signature</td>
         </tr>
         <tr>
@@ -875,7 +875,7 @@
               <table>
                 <tr>
                   <td>Date:</td>
-                  <td><%= co_f.date_field :declaration_date, value: Date.today, disabled: member_fields_disabled %></td>
+                  <td><%= co_f.date_field :declaration_date, disabled: member_fields_disabled %></td>
                   <td class="signature-label" style="padding-right: 25px">Signature</td>
                 </tr>
                <tr>
@@ -937,7 +937,7 @@
             <td colspan="4" style="height: 20px;"></td>
         </tr>
         <tr>
-            <td> Date:  <%= form.date_field :date_bm, label: false, value: Date.today, disabled: member_fields_disabled %></td>
+            <td> Date:  <%= form.date_field :date_bm, label: false, disabled: member_fields_disabled %></td>
 
         </tr>
         <tr>
@@ -1088,7 +1088,7 @@
     <hr />
 
     <div class="form-group">
-       <%= form.submit "Submit", class: "btn btn-primary" %>
+       <%= form.submit "Submit", class: "btn btn-primary", id: "loan-submit-btn" %>
     </div>
     <br />
     </br />
@@ -1207,3 +1207,15 @@
 
 
 
+
+<script>
+document.getElementById('loan-submit-btn').addEventListener('click', function(e) {
+  var loanType = document.querySelector('select[name="loan_application[loan_type_id]"]');
+  if (!loanType || !loanType.value || loanType.value === "") {
+    e.preventDefault();
+    alert("⚠️ Please select a Loan Type before submitting the application!");
+    loanType.focus();
+    return false;
+  }
+});
+</script>

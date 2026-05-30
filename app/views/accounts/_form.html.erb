@@ -304,7 +304,8 @@
       <td style="width:35%;"><strong>Name of the Nominee &amp; Address:<span style="color:red">*</span></strong></td>
       <td>
         <%= f.text_field :nominee_name, class: "acc-input", placeholder: "Nominee name" %>
-        <%= f.text_area :nominee_address, class: "acc-input", rows: 2, style: "margin-top:2px; width:100%; padding:4px;" %>
+        <label style="font-size:12px; margin-top:4px; display:block;"><input type="checkbox" id="same_as_perm_address" onchange="fillNomineeAddress(this)"> Same as Permanent Address</label>
+        <%= f.text_area :nominee_address, class: "acc-input", id: "nominee_address_field", rows: 2, style: "margin-top:2px; width:100%; padding:4px;" %>
       </td>
     </tr>
     <tr>
@@ -326,19 +327,45 @@
     <p style="font-size:13px;">(Any one document from each of the following two lists subject to Sahakari's Satisfaction)</p>
     <table class="acc-table table table-bordered" style="width:100%; font-size:13px;">
       <tr>
-        <th style="width:5%">#</th>
-        <th style="width:45%">LIST 1 - Latest Photo Identification Documents</th>
-        <th style="width:5%">#</th>
-        <th style="width:45%">LIST 2 - Latest Documents Showing Address Proof</th>
+        <th style="width:50%">LIST 1 - Latest Photo Identification Documents</th>
+        <th style="width:50%">LIST 2 - Latest Documents Showing Address Proof</th>
       </tr>
-      <tr><td>1</td><td><label><input type='radio' name='account[kyc_list1]' value='Aadhaar'> Aadhaar</label></td><td>1</td><td><label><input type='radio' name='account[kyc_list2]' value='Passport'> Passport</label></td></tr>
-      <tr><td>2</td><td><label><input type='radio' name='account[kyc_list1]' value='Pancard'> Pancard</label></td><td>2</td><td><label><input type='radio' name='account[kyc_list2]' value='Rationcard'> Rationcard</label></td></tr>
-      <tr><td>3</td><td><label><input type='radio' name='account[kyc_list1]' value='Voters ID Card'> Voters ID Card</label></td><td>3</td><td><label><input type='radio' name='account[kyc_list2]' value='Telephone Bill'> Telephone Bill</label></td></tr>
-      <tr><td>4</td><td><label><input type='radio' name='account[kyc_list1]' value='Driving License'> Driving License</label></td><td>4</td><td><label><input type='radio' name='account[kyc_list2]' value='Letter from employer'> Letter from employer</label></td></tr>
-      <tr><td>5</td><td><label><input type='radio' name='account[kyc_list1]' value='Identity card issued by the Govt/Public authority'> Identity card issued by the Govt/Public authority</label></td><td>5</td><td><label><input type='radio' name='account[kyc_list2]' value='Bank account statement with address'> Bank account statement with address</label></td></tr>
-      <tr><td>6</td><td><label><input type='radio' name='account[kyc_list1]' value='Letter from Employer'> Letter from Employer</label></td><td>6</td><td><label><input type='radio' name='account[kyc_list2]' value='Electricity Bill'> Electricity Bill</label></td></tr>
-      <tr><td>7</td><td></td><td>7</td><td><label><input type='radio' name='account[kyc_list2]' value='Income Tax/Property Tax assessment order/Receipt'> Income Tax/Property Tax assessment order/Receipt</label></td></tr>
-      <tr><td></td><td></td><td>8</td><td><label><input type='radio' name='account[kyc_list2]' value='Credit card'> Credit card</label></td></tr>
+<% kyc1 = @account.kyc_list1 rescue [] %>
+<% kyc2 = @account.kyc_list2 rescue [] %>
+<tr>
+  <td><label><input type='checkbox' name='account[kyc_list1][]' value='Aadhaar' <%= 'checked' if kyc1.include?('Aadhaar') %>> Aadhaar</label></td>
+  <td><label><input type='checkbox' name='account[kyc_list2][]' value='Passport' <%= 'checked' if kyc2.include?('Passport') %>> Passport</label></td>
+</tr>
+<tr>
+  <td><label><input type='checkbox' name='account[kyc_list1][]' value='Pancard' <%= 'checked' if kyc1.include?('Pancard') %>> Pancard</label></td>
+  <td><label><input type='checkbox' name='account[kyc_list2][]' value='Rationcard' <%= 'checked' if kyc2.include?('Rationcard') %>> Rationcard</label></td>
+</tr>
+<tr>
+  <td><label><input type='checkbox' name='account[kyc_list1][]' value='Voters ID Card' <%= 'checked' if kyc1.include?('Voters ID Card') %>> Voters ID Card</label></td>
+  <td><label><input type='checkbox' name='account[kyc_list2][]' value='Telephone Bill' <%= 'checked' if kyc2.include?('Telephone Bill') %>> Telephone Bill</label></td>
+</tr>
+<tr>
+  <td><label><input type='checkbox' name='account[kyc_list1][]' value='Driving License' <%= 'checked' if kyc1.include?('Driving License') %>> Driving License</label></td>
+  <td><label><input type='checkbox' name='account[kyc_list2][]' value='Letter from employer' <%= 'checked' if kyc2.include?('Letter from employer') %>> Letter from employer</label></td>
+</tr>
+<tr>
+  <td><label><input type='checkbox' name='account[kyc_list1][]' value='Identity card issued by the Govt/Public authority' <%= 'checked' if kyc1.include?('Identity card issued by the Govt/Public authority') %>> Identity card issued by the Govt/Public authority</label></td>
+  <td><label><input type='checkbox' name='account[kyc_list2][]' value='Bank account statement with address' <%= 'checked' if kyc2.include?('Bank account statement with address') %>> Bank account statement with address</label></td>
+</tr>
+<tr>
+  <td><label><input type='checkbox' name='account[kyc_list1][]' value='Letter from Employer' <%= 'checked' if kyc1.include?('Letter from Employer') %>> Letter from Employer</label></td>
+  <td><label><input type='checkbox' name='account[kyc_list2][]' value='Electricity Bill' <%= 'checked' if kyc2.include?('Electricity Bill') %>> Electricity Bill</label></td>
+</tr>
+<tr>
+  <td></td>
+  <td><label><input type='checkbox' name='account[kyc_list2][]' value='Income Tax/Property Tax assessment order/Receipt' <%= 'checked' if kyc2.include?('Income Tax/Property Tax assessment order/Receipt') %>> Income Tax/Property Tax assessment order/Receipt</label></td>
+</tr>
+<tr>
+  <td></td>
+  <td><label><input type='checkbox' name='account[kyc_list2][]' value='Credit card' <%= 'checked' if kyc2.include?('Credit card') %>> Credit card</label></td>
+</tr>
+
+
     </table>
     <div style="margin-top:20px; font-size:13px;">
       <p><strong>Declaration:</strong></p>
@@ -346,7 +373,7 @@
         <li>I/We hereby declare that the rules governing the deposits account have been read by me/us and that I/We agreed to be bound by the rules and bye laws of the sahakari in force now</li>
         <li>I/We hereby declare that the amount deposited in the account of my/our own</li>
         <li>I/We declare that the account will be operated upon and the balance will be payable to myself/Either or Survivor/Anyone or depositors against joint discharge</li>
-        <li>I/We hereby undertake the minimum balance of ₹._____ in the account as and also agree to maintain balance as modified by the Sahakari time to time</li>
+        <li>I/We hereby undertake the minimum balance of ₹.<%= f.text_field :minimum_balance, style: "width:80px;display:inline;border:none;border-bottom:1px solid #000;" %> in the account as and also agree to maintain balance as modified by the Sahakari time to time</li>
         <li>I/We also agree that the Sahakari got every right to close the account for non-maintenance of minimum balance</li>
         <li>I/We do agree to the condition that the rate of interest payable by the sahakari on my/our deposit account shall be subject to the changes in the interest rates made by the Mathrubhoomi Souharda Sahakari Sangha Ltd.</li>
         <li>In the event of my/our seeking pre-closure if term deposit/Recurring deposit/ I/We agree that Sahakari shall apply the rules of Pre-closure term deposit/RD prevailing on the date of my/our request for such pre closure</li>
@@ -455,28 +482,24 @@
           { prompt: "Select" }, class: "form-select form-select-sm" %></td>
       </tr>
       <tr>
-        <td><strong>Asset Ownership</strong></td>
-        <td><%= f.select :asset_ownership,
-          ["Two Wheeler (Self Owned)","Car (Self Owned)","Car (Company)","Residence (Self)",
-           "Residence (Company Provided)","Residence (Rented)","Residence (Purchase on Loan)"],
-          { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+        <td><strong>Caste</strong></td>
+        <td><%= f.text_field :caste, class: "acc-input" %></td>
       </tr>
       <tr>
-        <td><strong>Preferred Investment</strong></td>
-        <td><%= f.select :preferred_investment,
-          ["Bank Deposit","Mutual Fund","Shares","Company Deposit","Real Estate",
-           "Gold","PPF","Properties","Insurance","Others"],
-          { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+        <td><strong>Nationality</strong></td>
+        <td><%= f.text_field :nationality, class: "acc-input" %></td>
       </tr>
       <tr>
-        <td><strong>Loans</strong></td>
-        <td><%= f.select :loans_info,
-          ["Car","Housing","Durables","Against Deposit","Business","Gold","Others"],
-          { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+        <td><strong>Aadhaar No</strong></td>
+        <td><%= f.text_field :aadhaar_no, class: "acc-input", value: @member.aadhaar_number %></td>
       </tr>
       <tr>
-        <td><strong>Insurance</strong></td>
-        <td><%= f.select :insurance, ["Life","Mediclaim"], { prompt: "Select" }, class: "form-select form-select-sm" %></td>
+        <td><strong>PAN</strong></td>
+        <td><%= f.text_field :pan_no, class: "acc-input", value: @member.pan_card %></td>
+      </tr>
+      <tr>
+        <td><strong>Phone Number</strong></td>
+        <td><%= f.text_field :phone_no, class: "acc-input", value: @member.mobile_number %></td>
       </tr>
     </table>
   </div>
@@ -653,4 +676,29 @@
 
   setupSearch('search_app2', 'dropdown_app2', 'app2');
   setupSearch('search_app3', 'dropdown_app3', 'app3');
+  function fillNomineeAddress(checkbox) {
+    if (checkbox.checked) {
+      var house = document.getElementById("app1_perm_house") ? document.getElementById("app1_perm_house").value : "";
+      var village = document.getElementById("app1_perm_village") ? document.getElementById("app1_perm_village").value : "";
+      var district = document.getElementById("app1_perm_district") ? document.getElementById("app1_perm_district").value : "";
+      var pin = document.getElementById("app1_perm_pin") ? document.getElementById("app1_perm_pin").value : "";
+      var fullAddress = [house, village, district, pin].filter(Boolean).join(", ");
+      document.getElementById("nominee_address_field").value = fullAddress;
+    } else {
+      document.getElementById("nominee_address_field").value = "";
+    }
+  }
+
+  function fillNomineeAddress(checkbox) {
+    if (checkbox.checked) {
+      var house = document.getElementById("app1_perm_house") ? document.getElementById("app1_perm_house").value : "";
+      var village = document.getElementById("app1_perm_village") ? document.getElementById("app1_perm_village").value : "";
+      var district = document.getElementById("app1_perm_district") ? document.getElementById("app1_perm_district").value : "";
+      var pin = document.getElementById("app1_perm_pin") ? document.getElementById("app1_perm_pin").value : "";
+      var fullAddress = [house, village, district, pin].filter(Boolean).join(", ");
+      document.getElementById("nominee_address_field").value = fullAddress;
+    } else {
+      document.getElementById("nominee_address_field").value = "";
+    }
+  }
 </script>

@@ -8,7 +8,7 @@
       src: url('https://fonts.gstatic.com/s/balootamma2/v2/vEFK2_hCAgcR46PaajtrYlBbd7wf8tK1W77HtMo.ttf') format('truetype');
     }
     @page { size: A4 portrait; margin: 12mm; }
-    body { font-family: 'Baloo', Arial, sans-serif; font-size: 18px; width: 300mm; }
+    body { font-family: 'Baloo', sans-serif; font-size: 17px; width: 300mm; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
     th, td { border: 1px solid #aaa; padding: 5px 7px; vertical-align: top; }
     th { background: #f5f5f5; font-weight: bold; }
@@ -21,7 +21,7 @@
     .header-text { text-align: center; }
     .header-text h1 { font-size: 38px; font-weight: bold; margin: 0; }
     .header-text h2 { font-size: 28px; margin: 3px 0; }
-    .header-text p { font-size: 18px; margin: 3px 0; }
+    .header-text p { font-size: 19px; margin: 3px 0; }
     .header-text h3 { font-size: 28px; margin: 5px 0; font-weight: bold; }
     .separator { border-top: 2px solid #000; margin: 8px 0; }
     .sig-box { height: 80px; border: none; }
@@ -77,7 +77,7 @@
   <tr><th colspan="2" style="text-align:center;">Term Deposit</th></tr>
   <tr><td style="width:40%"><strong>Type of Term Deposit</strong></td><td><%= @account.term_deposit_type %></td></tr>
   <tr><td><strong>Deposit Amount (&#8377;)</strong></td><td><%= @account.term_deposit_amount %></td></tr>
-  <tr><td><strong>Deposit Period</strong></td><td>From: <%= @account.term_deposit_period_d %> &nbsp; To: <%= @account.term_deposit_period_m %> &nbsp; <% if @account.term_deposit_period_d.present? && @account.term_deposit_period_m.present? %><% d1 = Date.parse(@account.term_deposit_period_d.to_s); d2 = Date.parse(@account.term_deposit_period_m.to_s); total_days = (d2 - d1).to_i; years = total_days / 365; months = (total_days % 365) / 30; days = (total_days % 365) % 30 %><strong>(<%= years %> Years <%= months %> Months <%= days %> Days)</strong><% end %></td></tr>
+  <tr><td><strong>Deposit Period</strong></td><td>From: <%= @account.term_deposit_period_d %> &nbsp; To: <%= @account.term_deposit_period_m %> &nbsp; <% if @account.term_deposit_period_d.present? && @account.term_deposit_period_m.present? %><strong>(<%= ((Date.parse(@account.term_deposit_period_m.to_s) - Date.parse(@account.term_deposit_period_d.to_s)) / 30.44).round %> Months approx)</strong><% end %></td></tr>
   <tr><td><strong>Interest Payable</strong></td><td><%= @account.term_interest_payable %></td></tr>
   <tr><td><strong>Credit to A/c No</strong></td><td><%= @account.term_interest_credit_ac %></td></tr>
   <tr><td><strong>Rate of Interest (%)</strong></td><td><%= @account.term_interest_rate %></td></tr>
@@ -90,7 +90,7 @@
 <table>
   <tr><th colspan="2" style="text-align:center;">Recurring Deposit</th></tr>
   <tr><td style="width:40%"><strong>RD Amount (&#8377;)</strong></td><td><%= @account.rd_deposit_amount %></td></tr>
-  <tr><td><strong>Deposit Period</strong></td><td>From: <%= @account.rd_deposit_period_m %> &nbsp; To: <%= @account.rd_deposit_period_y %> &nbsp; <% if @account.rd_deposit_period_m.present? && @account.rd_deposit_period_y.present? %><% d1 = Date.parse(@account.rd_deposit_period_m.to_s); d2 = Date.parse(@account.rd_deposit_period_y.to_s); total_days = (d2 - d1).to_i; years = total_days / 365; months = (total_days % 365) / 30; days = (total_days % 365) % 30 %><strong>(<%= years %> Years <%= months %> Months <%= days %> Days)</strong><% end %></td></tr>
+  <tr><td><strong>Deposit Period</strong></td><td>From: <%= @account.rd_deposit_period_m %> &nbsp; To: <%= @account.rd_deposit_period_y %> &nbsp; <% if @account.rd_deposit_period_m.present? && @account.rd_deposit_period_y.present? %><strong>(<%= ((Date.parse(@account.rd_deposit_period_y.to_s) - Date.parse(@account.rd_deposit_period_m.to_s)) / 30.44).round %> Months approx)</strong><% end %></td></tr>
   <tr><td><strong>Debit SB A/c No</strong></td><td><%= @account.rd_sb_ac_no %></td></tr>
   <tr><td><strong>Credit RD A/c No</strong></td><td><%= @account.rd_credit_ac_no %></td></tr>
   <tr><td><strong>Rate of Interest (%)</strong></td><td><%= @account.rd_interest_rate %></td></tr>
@@ -139,7 +139,6 @@
   </tr>
 </table>
 
-<div style='margin-top:30px;'></div>
 <%# PHOTO & SIGNATURE %>
 <table>
   <tr><th colspan="3" style="text-align:center;">Applicant Photo & Specimen Signature</th></tr>
@@ -189,35 +188,20 @@
 </table>
 
 <%# KYC %>
-<% kyc_list1_selected = Array(@account.kyc_list1).flatten.map(&:to_s) %>
-<% kyc_list2_selected = Array(@account.kyc_list2).flatten.map(&:to_s) %>
-<% kyc_list1_items = ['Aadhaar', 'Pancard', 'Voters ID Card', 'Driving License', 'Identity card issued by the Govt/Public authority', 'Letter from Employer'] %>
-<% kyc_list2_items = ['Passport', 'Rationcard', 'Telephone Bill', 'Letter from employer', 'Bank account statement with address', 'Electricity Bill', 'Income Tax/Property Tax assessment order/Receipt', 'Credit card'] %>
 <table>
   <tr><th colspan="2" style="text-align:center;">KYC Identification Documents To be Submitted By Applicants</th></tr>
   <tr><th>LIST 1 - Latest Photo Identification Documents</th><th>LIST 2 - Latest Documents Showing Address Proof</th></tr>
-  <% [kyc_list1_items.length, kyc_list2_items.length].max.times do |i| %>
   <tr>
     <td>
-      <% if kyc_list1_items[i] %>
-        <% if kyc_list1_selected.include?(kyc_list1_items[i]) %>
-          &#9745; <%= kyc_list1_items[i] %>
-        <% else %>
-          &#9744; <%= kyc_list1_items[i] %>
-        <% end %>
-      <% end %>
+      1. Aadhaar &nbsp; 2. Pancard &nbsp; 3. Voters ID &nbsp; 4. Driving License<br>
+      5. Identity card issued by Govt/Public authority &nbsp; 6. Letter from Employer
     </td>
     <td>
-      <% if kyc_list2_items[i] %>
-        <% if kyc_list2_selected.include?(kyc_list2_items[i]) %>
-          &#9745; <%= kyc_list2_items[i] %>
-        <% else %>
-          &#9744; <%= kyc_list2_items[i] %>
-        <% end %>
-      <% end %>
+      1. Passport &nbsp; 2. Rationcard &nbsp; 3. Telephone Bill &nbsp; 4. Letter from employer<br>
+      5. Bank account statement &nbsp; 6. Electricity Bill &nbsp; 7. Income Tax assessment &nbsp; 8. Credit card
     </td>
   </tr>
-  <% end %>
+  <tr><td><strong>Selected:</strong> <%= @account.kyc_list1 %></td><td><strong>Selected:</strong> <%= @account.kyc_list2 %></td></tr>
 </table>
 
 <%# DECLARATION %>
@@ -226,7 +210,7 @@
     <li>I/We hereby declare that the rules governing the deposits account have been read by me/us and that I/We agreed to be bound by the rules and bye laws of the sahakari in force now</li>
     <li>I/We hereby declare that the amount deposited in the account of my/our own</li>
     <li>I/We declare that the account will be operated upon and the balance will be payable to myself/Either or Survivor/Anyone or depositors against joint discharge</li>
-    <li>I/We hereby undertake the minimum balance of ₹.<strong><%= @account.minimum_balance %></strong> in the account and also agree to maintain balance as modified by the Sahakari time to time</li>
+    <li>I/We hereby undertake the minimum balance of ₹._____ in the account and also agree to maintain balance as modified by the Sahakari time to time</li>
     <li>I/We also agree that the Sahakari got every right to close the account for non-maintenance of minimum balance</li>
     <li>I/We do agree that the rate of interest payable by the sahakari on my/our deposit account shall be subject to the changes in the interest rates made by the Mathrubhoomi Souharda Sahakari Sangha Ltd.</li>
     <li>Please send/do not send due date notice to my/our address</li>
@@ -302,11 +286,10 @@
   <tr><td><strong>If Self Employed - Nature of Business</strong></td><td><%= @account.nature_of_business %></td></tr>
   <tr><td><strong>If Self Employed - Profession</strong></td><td><%= @account.profession %></td></tr>
   <tr><td><strong>Annual Household Income</strong></td><td><%= @account.annual_income %></td></tr>
-  <tr><td><strong>Caste</strong></td><td><%= @account.caste %></td></tr>
-  <tr><td><strong>Nationality</strong></td><td><%= @account.nationality %></td></tr>
-  <tr><td><strong>Aadhaar No</strong></td><td><%= @account.aadhaar_no %></td></tr>
-  <tr><td><strong>PAN</strong></td><td><%= @account.pan_no %></td></tr>
-  <tr><td><strong>Phone Number</strong></td><td><%= @account.phone_no %></td></tr>
+  <tr><td><strong>Asset Ownership</strong></td><td><%= @account.asset_ownership %></td></tr>
+  <tr><td><strong>Preferred Investment</strong></td><td><%= @account.preferred_investment %></td></tr>
+  <tr><td><strong>Loans</strong></td><td><%= @account.loans_info %></td></tr>
+  <tr><td><strong>Insurance</strong></td><td><%= @account.insurance %></td></tr>
 </table>
 
 <%# FINAL SIGNATURE - Customer only on right %>

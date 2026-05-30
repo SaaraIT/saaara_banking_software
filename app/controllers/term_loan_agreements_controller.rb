@@ -38,6 +38,7 @@ class TermLoanAgreementsController < ApplicationController
     @term_loan_agreement.cooperative_branch_id = Current.branch.id
     @term_loan_agreement.loan_application_id = params[:loan_application_id]
     @term_loan_agreement.creator_id = current_user.id
+    @term_loan_agreement.branch_manager = Current.branch.manager_name
     if @term_loan_agreement.save
       redirect_to member_loan_application_path(@member, @loan_application), notice: 'Term Loan Agreement was successfully created.'
     else

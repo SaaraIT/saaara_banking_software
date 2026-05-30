@@ -1,8 +1,6 @@
-
     <style>
         body {
             font-family: Arial, sans-serif;
-
             line-height: 1.6;
         }
         .header {
@@ -39,15 +37,11 @@
 <%= form_with(model: [@member, @loan_application, @pro_note], local: true) do |f| %>
     <%= f.hidden_field :amount, value: @loan_application.sanction_amount %>
     <%= f.hidden_field :place, value: Current.branch.try(:name) %>
-    <%= f.hidden_field :date, value: @loan_application.sanction_order_date || Date.today %>
-    <%= f.hidden_field :promissory_not_date, value: @loan_application.sanction_order_date || Date.today %>
     <%= f.hidden_field :promissory_not_amount, value: @loan_application.sanction_amount %>
     <%= f.hidden_field :account_no, value: @member.sb_account_no %>
     <%= f.hidden_field :account_name, value: @member.name %>
-    <%= f.hidden_field :delivery_date, value: @loan_application.sanction_order_date || Date.today %>
-    <%= f.hidden_field :loan_delivery_date, value: @loan_application.sanction_order_date || Date.today %>
     <%= f.hidden_field :penal_rate, value: 3 %>
-    <%= f.hidden_field :loan, value: @loan_application.loan_type&.name %>
+    <%= f.hidden_field :loan, value: display_loan_type(@loan_application.loan_application_type) %>
 
     <div class="section">
         <span>Rs. <span class="underline"><%= @loan_application.sanction_amount %></span></span>
@@ -55,7 +49,7 @@
     </div>
 
     <div class="section" style="justify-content: flex-end;">
-        <span>Date <span class="underline"><%= @loan_application.sanction_order_date || Date.today %></span></span>
+        <span>Date <%= f.date_field :date, value: @pro_note.new_record? ? (@loan_application.sanction_order_date || Date.today) : @pro_note.date, style: "display: inline-block; width: 180px;" %></span>
     </div>
     <br />
 
@@ -69,20 +63,19 @@
         <% @loan_application.co_obligants.each_with_index do |co_obligant, index| %>
           <p><%= "#{index + 1}. #{co_obligant.member.name}<br /> #{co_obligant.member.address}".html_safe %></p>
         <% end %>
-
     </div>
     <br />
     <p class="underline" style="width: 100%;"></p>
     <div class="delivery-section">
         <p><b>Take Delivery Letter to DPN</b></p>
 
-         <div class="section">
+        <div class="section">
             <span>From:  <br /> <%= @member.name_and_address(true).html_safe %> </span>
             <span>Place <span class="underline"><%= Current.branch.try(:name) %></span></span>
         </div>
 
         <div class="section" style="justify-content: flex-end;">
-            <span>Date <span class="underline"><%= @loan_application.sanction_order_date || Date.today %></span></span>
+            <span>Date <%= f.date_field :delivery_date, value: @pro_note.new_record? ? (@loan_application.sanction_order_date || Date.today) : @pro_note.delivery_date, style: "display: inline-block; width: 180px;" %></span>
         </div>
     </div>
     <div class="sections">
@@ -95,24 +88,20 @@
     <br />
     <div class="sections">
         <p>Dear Sir,</p>
-        <p>I/We request you to take delivery on Demand Promissory Note Dated <span class="underline"><%= @loan_application.sanction_order_date || Date.today %></span> For Rs. <span class="underline"><%= @loan_application.sanction_amount %></span> duly executed by me/us in your favour and for which consideration has been received by me/us. We authorise you to disburse the amount to any one of us and the payment so made shall be binding on all.</p>
+        <p>I/We request you to take delivery on Demand Promissory Note Dated <span class="underline"><%= @pro_note.new_record? ? (@loan_application.sanction_order_date || Date.today) : @pro_note.promissory_not_date %></span> For Rs. <span class="underline"><%= @loan_application.sanction_amount %></span> duly executed by me/us in your favour and for which consideration has been received by me/us. We authorise you to disburse the amount to any one of us and the payment so made shall be binding on all.</p>
         <p>Without prejudice to your right to demand repayment of the entire loan at any time you may deem fit, the repayment by us of the said advance shall be by progressively reducing my/our liability to Sahakari as follows :</p>
         <p>We also authorise you if the Sahakari so thinks fit and necessary and without further reference to me/us, to debit the installments/interest, charges, expenses etc., as and when due by me/us on respective due dates to the SB/CA A/c No. <span class="underline"><%= @member.sb_account_no %></span> account of Shri <span class="underline"><%= @member.name %></span>, who is also one of the borrowers who will always make available sufficient funds in the account for the said purpose. This mandate is irrevocable till all our dues including interest, charge and expense are settled with you to the satisfaction of the Sahakari without prejudice to the right of the Sahakari otherwise available and the Sahakari is entitled to take action any way as deemed fit in its absolute discretion.</p>
         <p>I/We am/are aware that even though the pronote mentions the rate of interest linked to the Reserve Sahakari of India rate, I/We am/are liable to pay interest at the said rate and at such other rates as may be notified to me/us by the Sahakari from time to time.</p>
     </div>
 
-
-      <div class="containers">
-
+    <div class="containers">
         <div class="field">
             <label>Loan:</label>
-            <span class="underline"><%= @loan_application.loan_type&.name %></span>
+            <span class="underline"><%= display_loan_type(@loan_application.loan_application_type) %></span>
         </div>
         <br />
-
         <div class="field">
             <label>Name:</label>
-
             <span class="underline"><%= @member.name  %></span>
             <br />
             <span class="underline"><%= @member.address %></span>
@@ -124,8 +113,13 @@
         </div>
         <br />
         <div class="field">
-            <label>Dated:</label>
-            <span class="underline"><%= @loan_application.sanction_order_date || Date.today %></span>
+            <label>Promissory Note Date:</label>
+            <%= f.date_field :promissory_not_date, value: @pro_note.new_record? ? (@loan_application.sanction_order_date || Date.today) : @pro_note.promissory_not_date, style: "display: inline-block; width: 180px;" %>
+        </div>
+        <br />
+        <div class="field">
+            <label>Loan Delivery Date:</label>
+            <%= f.date_field :loan_delivery_date, value: @pro_note.new_record? ? (@loan_application.sanction_order_date || Date.today) : @pro_note.loan_delivery_date, style: "display: inline-block; width: 180px;" %>
         </div>
         <br />
         <div class="field">
@@ -163,14 +157,13 @@
                 <% @loan_application.co_obligants.each_with_index do |co_obligant, index| %>
                     <p style="text-align: right"><br /><%= "#{index + 1}. #{co_obligant.member.name}" %></p>
                 <% end %>
-
             </div>
         </div>
     </div>
 
    <hr />
    <div class="form-group">
-      <%= f.submit @pro_note.new_record? ? "Create Pro Note" : "Update Pro Note", class: "btn btn-primary" %>
+      <%= f.submit @pro_note.new_record? ? "Create Pro Note" : "Update Pro Note", class: "btn btn-primary", data: { disable_with: "Submitting..." } %>
    </div>
    <br />
 <% end %>
